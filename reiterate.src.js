@@ -8,7 +8,7 @@
 //
 // Patches are applied unobtrusively to the objects and methods that require them by renaming
 // existing methods and intercepting calls to them, so we can convert the iterator argument to
-//a function before passing it on to the original method. This has been tested against Prototype
+// a function before passing it on to the original method. This has been tested against Prototype
 // edge and includes methods defined in Prototype 1.6.0 if they are available.
 
 Function.from = function(iterator) {
