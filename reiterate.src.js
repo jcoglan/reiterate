@@ -40,7 +40,7 @@ Function.Operators = {
   'instanceof': function(x) { return this instanceof x; }
 };
 
-Function.TopLevel = {
+Function.Global = {
   'decodeURI'   : function() { return decodeURI(this); },
   'decodeURIComponent'  : function() { return decodeURIComponent(this); },
   'encodeURI'   : function() { return encodeURI(this); },
@@ -74,7 +74,7 @@ String.prototype.toFunction = function() {
     for (var i = 0, n = properties.length; i < n; i++) {
       key = properties[i];
       object = member;
-      member = Function.TopLevel[key] || object[key];
+      member = Function.Global[key] || object[key];
       if (typeof member == 'function') member = member.apply(object);
     }
     return member;
