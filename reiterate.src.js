@@ -52,11 +52,11 @@ String.prototype.toFunction = function() {
   if (!properties[0]) return Prototype.K;
   return function(o) {
     var object, member = o;
-    properties.each(function(p) {
+    for (var i = 0, n = properties.length; i < n; i++) {
       object = member;
-      member = object[p];
+      member = object[properties[i]];
       if (typeof member == 'function') member = member.apply(object);
-    });
+    }
     return member;
   };
 };
