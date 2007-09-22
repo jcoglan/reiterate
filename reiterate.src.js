@@ -18,6 +18,35 @@ Function.from = function(iterator) {
   return Prototype.K;
 };
 
+Function.Operators = {
+  '+'   : function(x) { return this + x; },
+  '-'   : function(x) { return this - x; },
+  '*'   : function(x) { return this * x; },
+  '/'   : function(x) { return this / x; },
+  '%'   : function(x) { return this % x; },
+  '<'   : function(x) { return this < x; },
+  '<='  : function(x) { return this <= x; },
+  '>'   : function(x) { return this > x; },
+  '>='  : function(x) { return this >= x; },
+  '=='  : function(x) { return Object.toValue(this, this.constructor) == x; },
+  '!='  : function(x) { return Object.toValue(this, this.constructor) != x; },
+  '===' : function(x) { return Object.toValue(this, this.constructor) === x; },
+  '!==' : function(x) { return Object.toValue(this, this.constructor) !== x; },
+  '&&'  : function(x) { return Object.toValue(this, this.constructor) && x; },
+  '&'   : function(x) { return this & x; },
+  '||'  : function(x) { return Object.toValue(this, this.constructor) || x; },
+  '|'   : function(x) { return this | x; },
+  'typeof': function(x) { return typeof Object.toValue(this, this.constructor) == x; },
+  'instanceof': function(x) { return this instanceof x; }
+};
+
+Object.toValue = function(x, konstructor) {
+  if (typeof x == 'undefined' || !konstructor) return undefined;
+  if (konstructor == Boolean) return x == true;
+  if ([Object, Function, Array].include(konstructor)) return x;
+  return konstructor.call(this, x);
+};
+
 String.prototype.toFunction = function() {
   var properties = this.split('.');
   if (!properties[0]) return Prototype.K;
@@ -33,10 +62,11 @@ String.prototype.toFunction = function() {
 };
 
 Array.prototype.toFunction = function() {
-  var method = this[0], args = this.slice(1);
+  var method = this[0], args = this.slice(1), op;
   if (!method) return Prototype.K;
+  if (op = Function.Operators[method]) method = op;
   return function(o) {
-    var fn = o[method];
+    var fn = (typeof method == 'function') ? method : o[method];
     return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
   };
 };
@@ -46,7 +76,8 @@ Hash.prototype.toFunction = function() {
   var hash = this;
   return function(o) {
     return hash.keys().inject(true, function(result, key) {
-      var fn = o[key], args = hash[key];
+      var fn = o[key], args = hash[key], op;
+      if (op = Function.Operators[key]) fn = op;
       if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
       return result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
     });

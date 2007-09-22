@@ -1,0 +1,305 @@
+Index: src/prototype.js
+===================================================================
+--- src/prototype.js	(revision 7533)
++++ src/prototype.js	(working copy)
+@@ -33,6 +33,6 @@
+ 
+ <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
+ 
+-<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
++<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js' %>
+ 
+ Element.addMethods();
+Index: src/reiterate.js
+===================================================================
+--- src/reiterate.js	(revision 0)
++++ src/reiterate.js	(revision 0)
+@@ -0,0 +1,98 @@
++// This file contains patches for Prototype that allow its iterator methods to use a much more
++// concise syntax, similar to that offered by Symbol#to_proc and Methodphitamine in Ruby.
++//
++// A #toFunction method is added to Array, Hash and String, and a selection of Enumerable
++// methods are patched to take advantage of the new syntax. See this Rails ticket for more info:
++//
++// http://dev.rubyonrails.org/ticket/9611
++//
++// Patches are applied unobtrusively to the objects and methods that require them by renaming
++// existing methods and intercepting calls to them, so we can convert the iterator argument to
++// a function before passing it on to the original method. This has been tested against Prototype
++// edge and includes methods defined in Prototype 1.6.0 if they are available.
++
++Function.from = function(iterator) {
++  if (typeof iterator == 'function') return iterator;
++  if (iterator.toFunction) return iterator.toFunction();
++  if (typeof iterator == 'object') return $H(iterator).toFunction();
++  return Prototype.K;
++};
++
++Function.Operators = {
++  '+'   : function(x) { return this + x; },
++  '-'   : function(x) { return this - x; },
++  '*'   : function(x) { return this * x; },
++  '/'   : function(x) { return this / x; },
++  '%'   : function(x) { return this % x; },
++  '<'   : function(x) { return this < x; },
++  '<='  : function(x) { return this <= x; },
++  '>'   : function(x) { return this > x; },
++  '>='  : function(x) { return this >= x; },
++  '=='  : function(x) { return Object.toValue(this, this.constructor) == x; },
++  '!='  : function(x) { return Object.toValue(this, this.constructor) != x; },
++  '===' : function(x) { return Object.toValue(this, this.constructor) === x; },
++  '!==' : function(x) { return Object.toValue(this, this.constructor) !== x; },
++  '&&'  : function(x) { return Object.toValue(this, this.constructor) && x; },
++  '&'   : function(x) { return this & x; },
++  '||'  : function(x) { return Object.toValue(this, this.constructor) || x; },
++  '|'   : function(x) { return this | x; },
++  'typeof': function(x) { return typeof Object.toValue(this, this.constructor) == x; },
++  'instanceof': function(x) { return this instanceof x; }
++};
++
++Object.toValue = function(x, konstructor) {
++  if (typeof x == 'undefined' || !konstructor) return undefined;
++  if (konstructor == Boolean) return x == true;
++  if ([Object, Function, Array].include(konstructor)) return x;
++  return konstructor.call(this, x);
++};
++
++String.prototype.toFunction = function() {
++  var properties = this.split('.');
++  if (!properties[0]) return Prototype.K;
++  return function(o) {
++    var object, member = o;
++    properties.each(function(p) {
++      object = member;
++      member = object[p];
++      if (typeof member == 'function') member = member.apply(object);
++    });
++    return member;
++  };
++};
++
++Array.prototype.toFunction = function() {
++  var method = this[0], args = this.slice(1), op;
++  if (!method) return Prototype.K;
++  if (op = Function.Operators[method]) method = op;
++  return function(o) {
++    var fn = (typeof method == 'function') ? method : o[method];
++    return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
++  };
++};
++
++Hash.prototype.toFunction = function() {
++  if (this.keys().length === 0) return Prototype.K;
++  var hash = this;
++  return function(o) {
++    return hash.keys().inject(true, function(result, key) {
++      var fn = o[key], args = hash[key], op;
++      if (op = Function.Operators[key]) fn = op;
++      if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
++      return result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
++    });
++  };
++};
++
++[Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
++Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
++  $w('all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
++    if (!object[method]) { return; }
++    object['__' + method + '_sans_function_conversion'] = object[method];
++    object[method] = function() {
++      var args = $A(arguments);
++      if (args[0]) args[0] = Function.from(args[0]);
++      return this['__' + method + '_sans_function_conversion'].apply(this, args);
++    };
++  });
++});
+Index: test/unit/enumerable.html
+===================================================================
+--- test/unit/enumerable.html	(revision 7533)
++++ test/unit/enumerable.html	(working copy)
+@@ -32,6 +32,10 @@
+ </tbody>
+ </table>
+ 
++<div style="display: block;" class="finder"></div>
++<div style="display: none;" class="finder"></div>
++<div style="display: inline;" class="finder"></div>
++
+ <!-- Tests follow -->
+ <script type="text/javascript" language="javascript" charset="utf-8">
+ // <![CDATA[
+@@ -45,6 +49,20 @@
+     
+     Nicknames: $w('sam- noradio htonl Ulysses'),
+     
++    Radios: [
++      {checked: true}, {checked: false}, {checked: 1}, {checked: true},
++      {checked: ''}, {checked: 17}, {checked: null}, {checked: 'foo'}
++    ],
++    
++    Records: [
++      {valid: function() { return this.name == 'Bob'; }, name: 'Mike'},
++      {valid: function() { return this.name == 'Bob'; }, name: 'Bob'}
++    ],
++    
++    Values: [{value: 12}, {value: -5}, {value: 9}, {value: 6}],
++    
++    Nested: [{value: {integer: 12}}, {value: {integer: -5}}, {value: {integer: 9}}, {value: {integer: 6}}],
++    
+     Basic: [1, 2, 3],
+     
+     Primes: [
+@@ -108,6 +126,36 @@
+         return value == this.target_value;
+       }, { target_value: 2 }));
+     }},
++    
++    testBinaryOperators: function() {with(this) {
++      assertEqual('3, 3', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['==', 3]).join(', '));
++      assertEqual('9, 7, 8', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['>', 5]).join(', '));
++      assertEqual('19, 13, 21, 15, 17', [7, 1, 9, 3, 5].map(['+', 12]).join(', '));
++      assertEqual('2, 7, 3, 6', [8, 28, 12, 24].map(['/', 4]).join(', '));
++      
++      assertEqual('7, 8, 5', [9, 3, 1, 7, 8, 5, 3, 0].findAll({'>': 3, '<=': 8}).join(', '));
++      assertEqual('1, 3, 1, 3, 0, 1, 3, 0', [9, 3, 1, 7, 8, 5, 3, 0].map(['%', 4]).join(', '));
++      
++      assertEqual('13, ruby, foo, 77, foo, foo',
++        [13, 'ruby', '', 77, false, 0].map(['||', 'foo']).join(', '));
++      
++      var object = {foo: 'bar'};
++      var stuff = [8,2,'sandwich',4,4.2,object,'4',4,''];
++      
++      assertEqual('4, 4', stuff.findAll(['===', 4]).join(', '));
++      assertEqual('4, 4, 4', stuff.findAll(['==', 4]).join(', '));
++      
++      assertEqual('sandwich, 4, ', stuff.findAll(['instanceof', String]).join(', '));
++      assertEqual(1, stuff.findAll(['==', 'sandwich']).length);
++      assertEqual(1, stuff.findAll(['===', '4']).length);
++      
++      assertEqual('bar', stuff.find(['typeof', 'object']).foo);
++      assertEqual('bar', stuff.find(['==', object]).foo);
++      
++      assertEqual('8, 2, 4, 4.2, 4', stuff.findAll({'instanceof': Number}).join(', '));
++      assertEqual('4, 4', stuff.findAll({'instanceof': Number, '==': 4}).join(', '));
++      assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
++    }},
+ 
+     testAny: function() {with(this) {
+       assert(!([].any()));
+@@ -122,6 +170,8 @@
+       assert(!Fixtures.Basic.any(function(value) {
+         return value > 5;
+       }));
++      assert(Fixtures.Radios.any('checked'));
++      assert(Fixtures.Records.any('valid'));
+     }},
+     
+     testAll: function() {with(this) {
+@@ -137,6 +187,9 @@
+       assert(!Fixtures.Basic.all(function(value) {
+         return value > 1;
+       }));
++      assert([{checked: true}, {checked: 12}, {checked: 'foo'}].all('checked'));
++      assert(!Fixtures.Radios.all('checked'));
++      assert(!Fixtures.Records.all('valid'));
+     }},
+     
+     testCollect: function() {with(this) {
+@@ -146,6 +199,24 @@
+         }).join(", "));
+       
+       assertEqual(26,  Fixtures.Primes.map().length);
++      
++      assertEqual(Fixtures.Nicknames.join(', '),
++        Fixtures.People.collect('nickname').join(', '));
++      
++      assertEqual(Fixtures.Values.pluck('value').join(', '),
++        Fixtures.Nested.collect('value.integer').join(', '));
++      
++      var set = Fixtures.Values.collect(function(v) {
++        return {
++          value: function() { return {quantity: this.k}; },
++          k: v.value
++        };
++      });
++      assertEqual(Fixtures.Values.pluck('value').join(', '),
++        set.collect('value.quantity').join(', '));
++      
++      assertEqual('plums, apples, oranges',
++        ['apples', 'oranges', 'plums'].sortBy({replace: [/^./, '']}).join(', '));
+     }},
+     
+     testDetect: function() {with(this) {
+@@ -153,6 +224,8 @@
+         Fixtures.People.detect(function(person) {
+           return person.nickname.match(/no/);
+         }).name);
++      assertEqual(true, Fixtures.Radios.detect('checked').checked);
++      assertEqual('Bob', Fixtures.Records.detect('valid').name);
+     }},
+     
+     testEachSlice: function() {with(this) {
+@@ -181,6 +254,14 @@
+     testFindAll: function() {with(this) {
+       assertEqual(Fixtures.Primes.join(', '),
+         Fixtures.Z.findAll(prime).join(', '));
++      assertEqual(5, Fixtures.Radios.findAll('checked').length);
++      assertEqual(2, $$('div.finder').findAll('visible').length);
++      
++      assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
++      assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
++      assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
++      assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
++      assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
+     }},
+     
+     testGrep: function() {with(this) {
+@@ -257,12 +338,14 @@
+       assertEqual(97, Fixtures.Primes.max());
+       assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
+       assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
++      assertEqual(12, Fixtures.Values.max('value'));
+     }},
+     
+     testMin: function() {with(this) {
+       assertEqual(1, Fixtures.Z.min());
+       assertEqual(0, [  1, 2, 3, 4, 5, 6, 7, 8, 0, 9 ].min());
+       assertEqual('Ulysses', Fixtures.Nicknames.min()); // ?U < ?h
++      assertEqual(-5, Fixtures.Values.min('value'));
+     }},
+     
+     testPartition: function() {with(this) {
+@@ -273,6 +356,10 @@
+       assertEqual(2, result.length);
+       assertEqual('sam-, htonl', result[0].join(', '));
+       assertEqual('noradio, Ulysses', result[1].join(', '));
++      
++      result = Fixtures.Radios.partition('checked');
++      assertEqual(5, result[0].length);
++      assertEqual(3, result[1].length);
+     }},
+     
+     testPluck: function() {with(this) {
+@@ -284,6 +371,12 @@
+       assertEqual(0, 
+         Fixtures.Nicknames.reject(Prototype.K).length);
+         
++      assertEqual(3,
++        Fixtures.Radios.reject('checked').length);
++        
++      assertEqual(1,
++        Fixtures.Records.reject('valid').length);
++        
+       assertEqual('sam-, noradio, htonl',
+         Fixtures.Nicknames.reject(function(nickname) {
+           return nickname != nickname.toLowerCase();
+@@ -295,6 +388,9 @@
+         Fixtures.People.sortBy(function(value) {
+           return value.nickname.toLowerCase();
+         }).pluck('nickname').join(', '));
++        
++      assertEqual('-5, 6, 9, 12',
++        Fixtures.Values.sortBy('value').pluck('value').join(', '));
+     }},
+     
+     testToArray: function() {with(this) {
