@@ -72,15 +72,18 @@ Array.prototype.toFunction = function() {
 };
 
 Hash.prototype.toFunction = function() {
-  if (this.keys().length === 0) return Prototype.K;
-  var hash = this;
+  var hash = this, keys = this.keys();
+  if (keys.length === 0) return Prototype.K;
   return function(o) {
-    return hash.keys().inject(true, function(result, key) {
-      var fn = o[key], args = hash[key], op;
+    var result = true, key, fn, args, op;
+    for (var i = 0, n = keys.length; i < n; i++) {
+      key = keys[i];
+      fn = o[key]; args = hash[key];
       if (op = Function.Operators[key]) fn = op;
       if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
-      return result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
-    });
+      result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
+    }
+    return result;
   };
 };
 
