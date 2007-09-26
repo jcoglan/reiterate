@@ -40,25 +40,6 @@ Function.Operators = {
   'instanceof': function(x) { return this instanceof x; }
 };
 
-Function.Global = {
-  'decodeURI'   : function() { return decodeURI(this); },
-  'decodeURIComponent'  : function() { return decodeURIComponent(this); },
-  'encodeURI'   : function() { return encodeURI(this); },
-  'encodeURIComponent'  : function() { return encodeURIComponent(this); },
-  'eval'        : function() { return eval(this); },
-  'isFinite'    : function() { return isFinite(this); },
-  'isNaN'       : function() { return isNaN(this); },
-  'parseInt'    : function() { return parseInt(this); },
-  'parseFloat'  : function() { return parseFloat(this); },
-  'Number'      : function() { return Number(this); },
-  'String'      : function() { return String(this); },
-  'Boolean'     : function() { return Boolean(Object.toValue(this, this.constructor)); },
-  'Array'       : function() { return (this instanceof Array) ? this : Array(this); },
-  'Function'    : function() { return Function.apply(this, this instanceof Array ? this : [this]); },
-  'RegExp'      : function() { return RegExp.apply(this, this instanceof Array ? this : [this]); },
-  'Error'       : function() { return Error(this); }
-};
-
 Object.toValue = function(x, konstructor) {
   if (typeof x == 'undefined' || !konstructor) return undefined;
   if (konstructor == Boolean) return x == true;
@@ -74,7 +55,7 @@ String.prototype.toFunction = function() {
     for (var i = 0, n = properties.length; i < n; i++) {
       key = properties[i];
       object = member;
-      member = Function.Global[key] || object[key];
+      member = object[key];
       if (typeof member == 'function') member = member.apply(object);
     }
     return member;
@@ -118,4 +99,8 @@ Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
       return this['__' + method + '_sans_function_conversion'].apply(this, args);
     };
   });
+  
+  object.count = function(iterator, context) {
+    return this.findAll(iterator, context).length;
+  };
 });

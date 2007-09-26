@@ -14,7 +14,7 @@ Index: src/reiterate.js
 ===================================================================
 --- src/reiterate.js	(revision 0)
 +++ src/reiterate.js	(revision 0)
-@@ -0,0 +1,121 @@
+@@ -0,0 +1,106 @@
 +// This file contains patches for Prototype that allow its iterator methods to use a much more
 +// concise syntax, similar to that offered by Symbol#to_proc and Methodphitamine in Ruby.
 +//
@@ -57,25 +57,6 @@ Index: src/reiterate.js
 +  'instanceof': function(x) { return this instanceof x; }
 +};
 +
-+Function.Global = {
-+  'decodeURI'   : function() { return decodeURI(this); },
-+  'decodeURIComponent'  : function() { return decodeURIComponent(this); },
-+  'encodeURI'   : function() { return encodeURI(this); },
-+  'encodeURIComponent'  : function() { return encodeURIComponent(this); },
-+  'eval'        : function() { return eval(this); },
-+  'isFinite'    : function() { return isFinite(this); },
-+  'isNaN'       : function() { return isNaN(this); },
-+  'parseInt'    : function() { return parseInt(this); },
-+  'parseFloat'  : function() { return parseFloat(this); },
-+  'Number'      : function() { return Number(this); },
-+  'String'      : function() { return String(this); },
-+  'Boolean'     : function() { return Boolean(Object.toValue(this, this.constructor)); },
-+  'Array'       : function() { return (this instanceof Array) ? this : Array(this); },
-+  'Function'    : function() { return Function.apply(this, this instanceof Array ? this : [this]); },
-+  'RegExp'      : function() { return RegExp.apply(this, this instanceof Array ? this : [this]); },
-+  'Error'       : function() { return Error(this); }
-+};
-+
 +Object.toValue = function(x, konstructor) {
 +  if (typeof x == 'undefined' || !konstructor) return undefined;
 +  if (konstructor == Boolean) return x == true;
@@ -91,7 +72,7 @@ Index: src/reiterate.js
 +    for (var i = 0, n = properties.length; i < n; i++) {
 +      key = properties[i];
 +      object = member;
-+      member = Function.Global[key] || object[key];
++      member = object[key];
 +      if (typeof member == 'function') member = member.apply(object);
 +    }
 +    return member;
@@ -135,6 +116,10 @@ Index: src/reiterate.js
 +      return this['__' + method + '_sans_function_conversion'].apply(this, args);
 +    };
 +  });
++  
++  object.count = function(iterator, context) {
++    return this.findAll(iterator, context).length;
++  };
 +});
 Index: test/unit/enumerable.html
 ===================================================================
@@ -172,7 +157,7 @@ Index: test/unit/enumerable.html
      Basic: [1, 2, 3],
      
      Primes: [
-@@ -108,6 +126,62 @@
+@@ -108,6 +126,43 @@
          return value == this.target_value;
        }, { target_value: 2 }));
      }},
@@ -207,35 +192,16 @@ Index: test/unit/enumerable.html
 +      assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
 +    }},
 +    
-+    testTopLevelFunctions: function() {with(this) {
-+      var numbers = $w('5 6.78 287.45 0.45 78');
-+      assertEqual('5, 6, 287, 0, 78', numbers.map('parseInt').join(', '));
-+      assertEqual('5, 6.78, 287.45, 0.45, 78', numbers.map('parseFloat').join(', '));
-+      assertEqual('0.45, 5, 6.78, 78, 287.45', numbers.sortBy('parseFloat').join(', '));
-+      
-+      assertEqual('4, 5, 6, 7', $R(4,7).map('String').join(', '));
-+      
-+      assertEqual(0, $w('1 2 3 4 5').findAll(['instanceof', Number]).length);
-+      assertEqual(5, $w('1 2 3 4 5').map('parseInt').findAll(['instanceof', Number]).length);
-+      assertEqual(5, $w('1 2 3 4 5').map('Number').findAll(['instanceof', Number]).length);
-+      assertEqual(5, $w('1 2 3 4 5').map('Number.String').findAll(['instanceof', String]).length);
-+      
-+      assertEqual('true, false, true, false, true, false, true, true',
-+        [45, 0, 'something', '', true, false, Prototype.K, {}].map('Boolean').join(', '));
-+      
-+      var funcs = [['a', 'return a * 5;'], 'return "JavaScript";', ['c,d', 'e', 'return c + d + e;']];
-+      funcs = funcs.map('Function');
-+      assertEqual(35, funcs[0](7));
-+      assertEqual('JavaScript', funcs[1]());
-+      assertEqual(15, funcs[2](2,8,5));
-+      
-+      assertEqual('/foo/, /[A-Z](.)[^ghj09]{4,9}$/i, /crazy/g',
-+        ['foo', ['[A-Z](.)[^ghj09]{4,9}$', 'i'], ['crazy', 'g']].map('RegExp.String').join(', '));
++    testCount: function() {with(this) {
++      assertEqual(7, $R(9,24).count({'>': 12, '<=': 19}));
++      this.prop = "reiterate";
++      var words = $w('could I please just reiterate slowly');
++      assertEqual(1, words.count(function(w) { return w == this.prop; }, this));
 +    }},
  
      testAny: function() {with(this) {
        assert(!([].any()));
-@@ -122,6 +196,8 @@
+@@ -122,6 +177,8 @@
        assert(!Fixtures.Basic.any(function(value) {
          return value > 5;
        }));
@@ -244,7 +210,7 @@ Index: test/unit/enumerable.html
      }},
      
      testAll: function() {with(this) {
-@@ -137,6 +213,9 @@
+@@ -137,6 +194,9 @@
        assert(!Fixtures.Basic.all(function(value) {
          return value > 1;
        }));
@@ -254,7 +220,7 @@ Index: test/unit/enumerable.html
      }},
      
      testCollect: function() {with(this) {
-@@ -146,6 +225,24 @@
+@@ -146,6 +206,24 @@
          }).join(", "));
        
        assertEqual(26,  Fixtures.Primes.map().length);
@@ -279,7 +245,7 @@ Index: test/unit/enumerable.html
      }},
      
      testDetect: function() {with(this) {
-@@ -153,6 +250,8 @@
+@@ -153,6 +231,8 @@
          Fixtures.People.detect(function(person) {
            return person.nickname.match(/no/);
          }).name);
@@ -288,7 +254,7 @@ Index: test/unit/enumerable.html
      }},
      
      testEachSlice: function() {with(this) {
-@@ -181,6 +280,14 @@
+@@ -181,6 +261,14 @@
      testFindAll: function() {with(this) {
        assertEqual(Fixtures.Primes.join(', '),
          Fixtures.Z.findAll(prime).join(', '));
@@ -303,7 +269,7 @@ Index: test/unit/enumerable.html
      }},
      
      testGrep: function() {with(this) {
-@@ -257,12 +364,14 @@
+@@ -257,12 +345,14 @@
        assertEqual(97, Fixtures.Primes.max());
        assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
        assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
@@ -318,7 +284,7 @@ Index: test/unit/enumerable.html
      }},
      
      testPartition: function() {with(this) {
-@@ -273,6 +382,10 @@
+@@ -273,6 +363,10 @@
        assertEqual(2, result.length);
        assertEqual('sam-, htonl', result[0].join(', '));
        assertEqual('noradio, Ulysses', result[1].join(', '));
@@ -329,7 +295,7 @@ Index: test/unit/enumerable.html
      }},
      
      testPluck: function() {with(this) {
-@@ -284,6 +397,12 @@
+@@ -284,6 +378,12 @@
        assertEqual(0, 
          Fixtures.Nicknames.reject(Prototype.K).length);
          
@@ -342,7 +308,7 @@ Index: test/unit/enumerable.html
        assertEqual('sam-, noradio, htonl',
          Fixtures.Nicknames.reject(function(nickname) {
            return nickname != nickname.toLowerCase();
-@@ -295,6 +414,9 @@
+@@ -295,6 +395,9 @@
          Fixtures.People.sortBy(function(value) {
            return value.nickname.toLowerCase();
          }).pluck('nickname').join(', '));
