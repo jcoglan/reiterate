@@ -2,7 +2,7 @@ Index: src/prototype.js
 ===================================================================
 --- src/prototype.js	(revision 8140)
 +++ src/prototype.js	(working copy)
-@@ -36,6 +36,6 @@
+@@ -37,6 +37,6 @@
  
  <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
  
