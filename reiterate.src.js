@@ -73,7 +73,7 @@ Array.prototype.toFunction = function() {
 };
 
 Hash.prototype.toFunction = function() {
-  var hash = this, keys = this.keys();
+  var hash = this._object || this, keys = this.keys();
   if (keys.length === 0) return Prototype.K;
   return function(o) {
     var result = true, key, fn, args, op;

@@ -1,8 +1,8 @@
 Index: src/prototype.js
 ===================================================================
---- src/prototype.js	(revision 7533)
+--- src/prototype.js	(revision 8140)
 +++ src/prototype.js	(working copy)
-@@ -33,6 +33,6 @@
+@@ -36,6 +36,6 @@
  
  <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
  
@@ -90,7 +90,7 @@ Index: src/reiterate.js
 +};
 +
 +Hash.prototype.toFunction = function() {
-+  var hash = this, keys = this.keys();
++  var hash = this._object || this, keys = this.keys();
 +  if (keys.length === 0) return Prototype.K;
 +  return function(o) {
 +    var result = true, key, fn, args, op;
@@ -123,7 +123,7 @@ Index: src/reiterate.js
 +});
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 7533)
+--- test/unit/enumerable.html	(revision 8140)
 +++ test/unit/enumerable.html	(working copy)
 @@ -32,6 +32,10 @@
  </tbody>
