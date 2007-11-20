@@ -1,6 +1,6 @@
 Index: src/prototype.js
 ===================================================================
---- src/prototype.js	(revision 8140)
+--- src/prototype.js	(revision 8172)
 +++ src/prototype.js	(working copy)
 @@ -37,6 +37,6 @@
  
@@ -109,11 +109,11 @@ Index: src/reiterate.js
 +Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
 +  $w('all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
 +    if (!object[method]) { return; }
-+    object['__' + method + '_sans_function_conversion'] = object[method];
++    var wrapped = object[method];
 +    object[method] = function() {
 +      var args = $A(arguments);
 +      if (args[0]) args[0] = Function.from(args[0]);
-+      return this['__' + method + '_sans_function_conversion'].apply(this, args);
++      return wrapped.apply(this, args);
 +    };
 +  });
 +  
@@ -123,7 +123,7 @@ Index: src/reiterate.js
 +});
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 8140)
+--- test/unit/enumerable.html	(revision 8172)
 +++ test/unit/enumerable.html	(working copy)
 @@ -32,6 +32,10 @@
  </tbody>

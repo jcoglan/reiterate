@@ -92,11 +92,11 @@ Hash.prototype.toFunction = function() {
 Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
   $w('all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
     if (!object[method]) { return; }
-    object['__' + method + '_sans_function_conversion'] = object[method];
+    var wrapped = object[method];
     object[method] = function() {
       var args = $A(arguments);
       if (args[0]) args[0] = Function.from(args[0]);
-      return this['__' + method + '_sans_function_conversion'].apply(this, args);
+      return wrapped.apply(this, args);
     };
   });
   
