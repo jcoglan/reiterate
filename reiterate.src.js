@@ -168,7 +168,7 @@ Function.ALL_METHODS = [
   "indexOf", "innerHTML", "input", "isPrototypeOf", "ismap", "join", "label", "lang", "language", 
   "lastIndex", "lastIndexOf", "length", "link", "log", "longdesc", "map", "marginheight", 
   "marginwidth", "match", "max", "maxlength", "media", "method", "min", "multiline", 
-  "multiple", "name", "nohref", "noresize", "noshade", "now", "nowrap", "object", "onblur", 
+  "multiple", "name", "node", "nodeType", "nohref", "noresize", "noshade", "now", "nowrap", "object", "onblur", 
   "onchange", "onclick", "ondblclick", "onfocus", "onkeydown", "onkeypress", "onkeyup", 
   "onload", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", 
   "onreset", "onselect", "onsubmit", "onunload", "parse", "pop", "pow", "profile", "prompt", 
