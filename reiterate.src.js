@@ -111,13 +111,11 @@ Function.ChainCollector = function() {
     var chain = this;
     return function(o) { return chain.fire(o); };
   };
-  
-  for (var i = 0, n = arguments.length; i < n; i++)
-    CLASS.addMethods(this, arguments[i]);
 };
 
-Function.ChainCollector.addMethods = function(self, object) {
+Function.ChainCollector.addMethods = function(object) {
   var methods = [], property, i, n, name;
+  var self = this.prototype;
   
   var reservedNames = [], blank = new this();
   for (property in blank) reservedNames.push(property);
@@ -143,7 +141,7 @@ Function.ChainCollector.addMethods = function(self, object) {
     })(methods[i]);
   
   if (object.prototype)
-    this.addMethods(self, object.prototype);
+    this.addMethods(object.prototype);
 };
 
 Function.ALL_METHODS = [
@@ -181,16 +179,19 @@ Function.ALL_METHODS = [
   "valuetype", "version", "vlink", "vspace", "watch", "width"
 ];
 
+[Array, Date, Element.Methods, Element.Methods.Simulated, Enumerable, Event,
+    Form, Form.Element, Function, Hash, Number, Object, ObjectRange, Position,
+    String, Template].each(function(object) {
+  var property;
+  for (property in object) Function.ALL_METHODS.push(property);
+  for (property in object.prototype || {}) Function.ALL_METHODS.push(property);
+});
+
+Function.ALL_METHODS = Function.ALL_METHODS.uniq().sort();
+Function.ChainCollector.addMethods(Function.ALL_METHODS);
+
 var it = its = function() {
-  var chain = new Function.ChainCollector(Function.ALL_METHODS, Array, Date,
-      Element.Methods, Element.Methods.Simulated, Enumerable, Event, Form,
-      Form.Element, Function, Hash, Number, Object, ObjectRange, Position,
-      String, Template);
-      
-  for (var i = 0, n = arguments.length; i < n; i++)
-    Function.ChainCollector.addMethods(chain, arguments[i]);
-  
-  return chain;
+  return new Function.ChainCollector();
 };
 
 [Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
