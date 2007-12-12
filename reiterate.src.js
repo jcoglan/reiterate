@@ -201,7 +201,7 @@ var it = its = function() {
 
 [Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
 Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
-  $w('all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
+  $w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
     if (!object[method]) { return; }
     var wrapped = object[method];
     object[method] = function() {
