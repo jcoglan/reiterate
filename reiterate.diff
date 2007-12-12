@@ -131,6 +131,8 @@ Index: src/reiterate.js
 +  
 +  this.toFunction = function() {
 +    var chain = this;
++    if (it && it.____ && it.fire) it = new CLASS();
++    if (its && its.____ && its.fire) its = new CLASS();
 +    return function(o) { return chain.fire(o); };
 +  };
 +};
@@ -212,9 +214,7 @@ Index: src/reiterate.js
 +Function.ALL_METHODS = Function.ALL_METHODS.uniq().sort();
 +Function.ChainCollector.addMethods(Function.ALL_METHODS);
 +
-+var it = its = function() {
-+  return new Function.ChainCollector();
-+};
++var it = its = new Function.ChainCollector();
 +
 +[Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
 +Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
@@ -361,7 +361,7 @@ Index: test/unit/enumerable.html
            return person.nickname.match(/no/);
          }).name);
 +      assertEqual(true, Fixtures.Radios.detect('checked').checked);
-+      assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
++      assertEqual(true, Fixtures.Radios.detect(it.checked()).checked);
 +      assertEqual('Bob', Fixtures.Records.detect('valid').name);
      }},
      
@@ -375,7 +375,7 @@ Index: test/unit/enumerable.html
 +      
 +      assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
 +      assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
-+      assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
++      assertEqual(3, $$('div').findAll(it.hasClassName('finder')).length);
 +      assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
 +      assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
 +      assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
@@ -387,7 +387,7 @@ Index: test/unit/enumerable.html
        assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
        assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
 +      assertEqual(12, Fixtures.Values.max('value'));
-+      assertEqual(12, Fixtures.Values.max(its().value()));
++      assertEqual(12, Fixtures.Values.max(its.value()));
      }},
      
      testMin: function() {with(this) {
@@ -428,7 +428,7 @@ Index: test/unit/enumerable.html
          }).pluck('nickname').join(', '));
 +        
 +      assertEqual('-5, 6, 9, 12',
-+        Fixtures.Values.sortBy(its().value()).map('value').join(', '));
++        Fixtures.Values.sortBy(its.value()).map('value').join(', '));
      }},
      
      testToArray: function() {with(this) {

@@ -114,6 +114,8 @@ Function.ChainCollector = function(base) {
   
   this.toFunction = function() {
     var chain = this;
+    if (it && it.____ && it.fire) it = new CLASS();
+    if (its && its.____ && its.fire) its = new CLASS();
     return function(o) { return chain.fire(o); };
   };
 };
@@ -195,9 +197,7 @@ Function.ALL_METHODS = [
 Function.ALL_METHODS = Function.ALL_METHODS.uniq().sort();
 Function.ChainCollector.addMethods(Function.ALL_METHODS);
 
-var it = its = function() {
-  return new Function.ChainCollector();
-};
+var it = its = new Function.ChainCollector();
 
 [Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
 Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
