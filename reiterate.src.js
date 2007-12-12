@@ -18,7 +18,7 @@ Function.from = function(iterator) {
   return Prototype.K;
 };
 
-Function.Operators = {
+Function.OPERATORS = {
   '+'   : function(x) { return this + x; },
   '-'   : function(x) { return this - x; },
   '*'   : function(x) { return this * x; },
@@ -65,7 +65,7 @@ String.prototype.toFunction = function() {
 Array.prototype.toFunction = function() {
   var method = this[0], args = this.slice(1), op;
   if (!method) return Prototype.K;
-  if (op = Function.Operators[method]) method = op;
+  if (op = Function.OPERATORS[method]) method = op;
   return function(o) {
     var fn = (typeof method == 'function') ? method : o[method];
     return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
@@ -80,7 +80,7 @@ Hash.prototype.toFunction = function() {
     for (var i = 0, n = keys.length; i < n; i++) {
       key = keys[i];
       fn = o[key]; args = hash[key];
-      if (op = Function.Operators[key]) fn = op;
+      if (op = Function.OPERATORS[key]) fn = op;
       if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
       result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
     }

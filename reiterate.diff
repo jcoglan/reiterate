@@ -1,8 +1,8 @@
 Index: src/prototype.js
 ===================================================================
---- src/prototype.js	(revision 8172)
+--- src/prototype.js	(revision 8376)
 +++ src/prototype.js	(working copy)
-@@ -37,6 +37,6 @@
+@@ -35,6 +35,6 @@
  
  <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
  
@@ -35,7 +35,7 @@ Index: src/reiterate.js
 +  return Prototype.K;
 +};
 +
-+Function.Operators = {
++Function.OPERATORS = {
 +  '+'   : function(x) { return this + x; },
 +  '-'   : function(x) { return this - x; },
 +  '*'   : function(x) { return this * x; },
@@ -82,7 +82,7 @@ Index: src/reiterate.js
 +Array.prototype.toFunction = function() {
 +  var method = this[0], args = this.slice(1), op;
 +  if (!method) return Prototype.K;
-+  if (op = Function.Operators[method]) method = op;
++  if (op = Function.OPERATORS[method]) method = op;
 +  return function(o) {
 +    var fn = (typeof method == 'function') ? method : o[method];
 +    return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
@@ -97,7 +97,7 @@ Index: src/reiterate.js
 +    for (var i = 0, n = keys.length; i < n; i++) {
 +      key = keys[i];
 +      fn = o[key]; args = hash[key];
-+      if (op = Function.Operators[key]) fn = op;
++      if (op = Function.OPERATORS[key]) fn = op;
 +      if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
 +      result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
 +    }
@@ -123,7 +123,7 @@ Index: src/reiterate.js
 +});
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 8172)
+--- test/unit/enumerable.html	(revision 8376)
 +++ test/unit/enumerable.html	(working copy)
 @@ -32,6 +32,10 @@
  </tbody>
