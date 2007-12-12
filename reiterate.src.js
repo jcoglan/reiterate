@@ -28,23 +28,16 @@ Function.OPERATORS = {
   '<='  : function(x) { return this <= x; },
   '>'   : function(x) { return this > x; },
   '>='  : function(x) { return this >= x; },
-  '=='  : function(x) { return Object.toValue(this, this.constructor) == x; },
-  '!='  : function(x) { return Object.toValue(this, this.constructor) != x; },
-  '===' : function(x) { return Object.toValue(this, this.constructor) === x; },
-  '!==' : function(x) { return Object.toValue(this, this.constructor) !== x; },
-  '&&'  : function(x) { return Object.toValue(this, this.constructor) && x; },
+  '=='  : function(x) { return this.valueOf() == x; },
+  '!='  : function(x) { return this.valueOf() != x; },
+  '===' : function(x) { return this.valueOf() === x; },
+  '!==' : function(x) { return this.valueOf() !== x; },
+  '&&'  : function(x) { return this.valueOf() && x; },
   '&'   : function(x) { return this & x; },
-  '||'  : function(x) { return Object.toValue(this, this.constructor) || x; },
+  '||'  : function(x) { return this.valueOf() || x; },
   '|'   : function(x) { return this | x; },
-  'typeof': function(x) { return typeof Object.toValue(this, this.constructor) == x; },
+  'typeof': function(x) { return typeof this.valueOf() == x; },
   'instanceof': function(x) { return this instanceof x; }
-};
-
-Object.toValue = function(x, konstructor) {
-  if (typeof x == 'undefined' || !konstructor) return undefined;
-  if (konstructor == Boolean) return x == true;
-  if ([Object, Function, Array].include(konstructor)) return x;
-  return konstructor.call(this, x);
 };
 
 String.prototype.toFunction = function() {
