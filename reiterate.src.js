@@ -114,8 +114,8 @@ Function.ChainCollector = function(base) {
   
   this.toFunction = function() {
     var chain = this;
-    if (it && it.____ && it.fire) it = new CLASS();
-    if (its && its.____ && its.fire) its = new CLASS();
+    if (it instanceof CLASS) it = new CLASS();
+    if (its instanceof CLASS) its = new CLASS();
     return function(o) { return chain.fire(o); };
   };
 };
