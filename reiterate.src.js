@@ -86,11 +86,11 @@ Hash.prototype.toFunction = function() {
   return Function.fromObject(this._object || this);
 };
 
-Function.ChainCollector = function() {
+Function.ChainCollector = function(base) {
   var CLASS = arguments.callee;
   
   this.then = this.and = this;
-  var queue = [], baseObject = arguments[0];
+  var queue = [], baseObject = base || {};
   
   this.____ = function(method, args) {
     queue.push({func: method, args: args});
