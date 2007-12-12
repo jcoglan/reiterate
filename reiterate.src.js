@@ -124,7 +124,7 @@ Function.ChainCollector.addMethods = function(object) {
   
   var reservedNames = [], blank = new this();
   for (property in blank) reservedNames.push(property);
-  var re = new RegExp('^' + reservedNames.join('|') + '$');
+  var re = new RegExp('^(?:' + reservedNames.join('|') + ')$');
   
   for (property in object) {
     if (Number(property) != property)
