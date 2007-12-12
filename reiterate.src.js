@@ -12,10 +12,10 @@
 // edge and includes methods defined in Prototype 1.6.0 if they are available.
 
 Function.from = function(iterator) {
-  if (typeof iterator == 'function') return iterator;
   if (iterator.toFunction) return iterator.toFunction();
-  if (typeof iterator == 'object') return $H(iterator).toFunction();
-  return Prototype.K;
+  if (typeof iterator == 'function') return iterator;
+  if (typeof iterator == 'object') return Function.fromObject(iterator);
+  return function(x) { return x; };
 };
 
 Function.OPERATORS = {
@@ -42,7 +42,7 @@ Function.OPERATORS = {
 
 String.prototype.toFunction = function() {
   var properties = this.split('.');
-  if (!properties[0]) return Prototype.K;
+  if (!properties[0]) return function(x) { return x; };
   return function(o) {
     var object, member = o, key;
     for (var i = 0, n = properties.length; i < n; i++) {
@@ -57,7 +57,7 @@ String.prototype.toFunction = function() {
 
 Array.prototype.toFunction = function() {
   var method = this[0], args = this.slice(1), op;
-  if (!method) return Prototype.K;
+  if (!method) return function(x) { return x; };
   if (op = Function.OPERATORS[method]) method = op;
   return function(o) {
     var fn = (typeof method == 'function') ? method : o[method];
@@ -65,20 +65,25 @@ Array.prototype.toFunction = function() {
   };
 };
 
-Hash.prototype.toFunction = function() {
-  var hash = this._object || this, keys = this.keys();
-  if (keys.length === 0) return Prototype.K;
+Function.fromObject = function(object) {
+  var keys = [];
+  for (var field in object) { if (object.hasOwnProperty(field)) keys.push(field); }
+  if (keys.length === 0) return function(x) { return x; };
   return function(o) {
     var result = true, key, fn, args, op;
     for (var i = 0, n = keys.length; i < n; i++) {
       key = keys[i];
-      fn = o[key]; args = hash[key];
+      fn = o[key]; args = object[key];
       if (op = Function.OPERATORS[key]) fn = op;
       if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
       result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
     }
     return result;
   };
+};
+
+Hash.prototype.toFunction = function() {
+  return Function.fromObject(this._object || this);
 };
 
 Function.ChainCollector = function() {
