@@ -18,28 +18,6 @@ Function.from = function(iterator) {
   return function(x) { return x; };
 };
 
-Function.OPERATORS = {
-  '+'   : function(x) { return this + x; },
-  '-'   : function(x) { return this - x; },
-  '*'   : function(x) { return this * x; },
-  '/'   : function(x) { return this / x; },
-  '%'   : function(x) { return this % x; },
-  '<'   : function(x) { return this < x; },
-  '<='  : function(x) { return this <= x; },
-  '>'   : function(x) { return this > x; },
-  '>='  : function(x) { return this >= x; },
-  '=='  : function(x) { return this.valueOf() == x; },
-  '!='  : function(x) { return this.valueOf() != x; },
-  '===' : function(x) { return this.valueOf() === x; },
-  '!==' : function(x) { return this.valueOf() !== x; },
-  '&&'  : function(x) { return this.valueOf() && x; },
-  '&'   : function(x) { return this & x; },
-  '||'  : function(x) { return this.valueOf() || x; },
-  '|'   : function(x) { return this | x; },
-  'typeof': function(x) { return typeof this.valueOf() == x; },
-  'instanceof': function(x) { return this instanceof x; }
-};
-
 String.prototype.toFunction = function() {
   var properties = this.split('.');
   if (!properties[0]) return function(x) { return x; };
@@ -149,6 +127,28 @@ Function.ChainCollector.addMethods = function(object) {
   
   if (object.prototype)
     this.addMethods(object.prototype);
+};
+
+Function.OPERATORS = {
+  '+'   : function(x) { return this + x; },
+  '-'   : function(x) { return this - x; },
+  '*'   : function(x) { return this * x; },
+  '/'   : function(x) { return this / x; },
+  '%'   : function(x) { return this % x; },
+  '<'   : function(x) { return this < x; },
+  '<='  : function(x) { return this <= x; },
+  '>'   : function(x) { return this > x; },
+  '>='  : function(x) { return this >= x; },
+  '=='  : function(x) { return this.valueOf() == x; },
+  '!='  : function(x) { return this.valueOf() != x; },
+  '===' : function(x) { return this.valueOf() === x; },
+  '!==' : function(x) { return this.valueOf() !== x; },
+  '&&'  : function(x) { return this.valueOf() && x; },
+  '&'   : function(x) { return this & x; },
+  '||'  : function(x) { return this.valueOf() || x; },
+  '|'   : function(x) { return this | x; },
+  'typeof': function(x) { return typeof this.valueOf() == x; },
+  'instanceof': function(x) { return this instanceof x; }
 };
 
 Function.ALL_METHODS = [
