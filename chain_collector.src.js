@@ -107,9 +107,10 @@ Function.ALL_METHODS = [
   "usemap", "valign", "value", "valueOf", "valuetype", "version", "vlink", "vspace", "watch", "width"
 ];
 
-[Array, Date, Element.Methods, Element.Methods.Simulated, Enumerable, Event,
-Form, Form.Element, Function, Hash, Number, Object, ObjectRange, Position,
-String, Template].each(function(object) {
+[Ajax, Array, Class, Date, Element, Element.Methods, Element.Methods.Simulated,
+Enumerable, Event, Form, Form.Element, Function, Hash, Insertion, Number, Object,
+ObjectRange, PeriodicalExecuter, Position, Prototype, String, Template,
+document].each(function(object) {
   var property;
   for (property in object) Function.ALL_METHODS.push(property);
   for (property in object.prototype || {}) Function.ALL_METHODS.push(property);
