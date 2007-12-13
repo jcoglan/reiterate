@@ -1,86 +1,8 @@
-Index: src/prototype.js
+Index: src/chain_collector.js
 ===================================================================
---- src/prototype.js	(revision 8376)
-+++ src/prototype.js	(working copy)
-@@ -35,6 +35,6 @@
- 
- <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
- 
--<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
-+<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js' %>
- 
- Element.addMethods();
-Index: src/reiterate.js
-===================================================================
---- src/reiterate.js	(revision 0)
-+++ src/reiterate.js	(revision 0)
-@@ -0,0 +1,226 @@
-+// This file contains patches for Prototype that allow its iterator methods to use a much more
-+// concise syntax, similar to that offered by Symbol#to_proc and Methodphitamine in Ruby.
-+//
-+// A #toFunction method is added to Array, Hash and String, and a selection of Enumerable
-+// methods are patched to take advantage of the new syntax. See this Rails ticket for more info:
-+//
-+// http://dev.rubyonrails.org/ticket/9611
-+//
-+// Patches are applied unobtrusively to the objects and methods that require them by renaming
-+// existing methods and intercepting calls to them, so we can convert the iterator argument to
-+// a function before passing it on to the original method. This has been tested against Prototype
-+// edge and includes methods defined in Prototype 1.6.0 if they are available.
-+
-+Function.from = function(iterator) {
-+  if (iterator.toFunction) return iterator.toFunction();
-+  if (typeof iterator == 'function') return iterator;
-+  if (typeof iterator == 'object') return Function.fromObject(iterator);
-+  return function(x) { return x; };
-+};
-+
-+String.prototype.toFunction = function() {
-+  var properties = this.split('.');
-+  if (!properties[0]) return function(x) { return x; };
-+  return function(o) {
-+    var object, member = o, key;
-+    for (var i = 0, n = properties.length; i < n; i++) {
-+      key = properties[i];
-+      object = member;
-+      member = object[key];
-+      if (typeof member == 'function') member = member.apply(object);
-+    }
-+    return member;
-+  };
-+};
-+
-+Array.prototype.toFunction = function() {
-+  var method = this[0], args = this.slice(1), op;
-+  if (!method) return function(x) { return x; };
-+  if (op = Function.OPERATORS[method]) method = op;
-+  return function(o) {
-+    var fn = (typeof method == 'function') ? method : o[method];
-+    return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
-+  };
-+};
-+
-+Function.fromObject = function(object) {
-+  var keys = [];
-+  for (var field in object) { if (object.hasOwnProperty(field)) keys.push(field); }
-+  if (keys.length === 0) return function(x) { return x; };
-+  return function(o) {
-+    var result = true, key, fn, args, op;
-+    for (var i = 0, n = keys.length; i < n; i++) {
-+      key = keys[i];
-+      fn = o[key]; args = object[key];
-+      if (op = Function.OPERATORS[key]) fn = op;
-+      if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
-+      result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
-+    }
-+    return result;
-+  };
-+};
-+
-+Hash.prototype.toFunction = function() {
-+  return Function.fromObject(this._object || this);
-+};
-+
+--- src/chain_collector.js	(revision 0)
++++ src/chain_collector.js	(revision 0)
+@@ -0,0 +1,121 @@
 +Function.ChainCollector = function(base) {
 +  var CLASS = arguments.callee;
 +  
@@ -146,28 +68,6 @@ Index: src/reiterate.js
 +    this.addMethods(object.prototype);
 +};
 +
-+Function.OPERATORS = {
-+  '+'   : function(x) { return this + x; },
-+  '-'   : function(x) { return this - x; },
-+  '*'   : function(x) { return this * x; },
-+  '/'   : function(x) { return this / x; },
-+  '%'   : function(x) { return this % x; },
-+  '<'   : function(x) { return this < x; },
-+  '<='  : function(x) { return this <= x; },
-+  '>'   : function(x) { return this > x; },
-+  '>='  : function(x) { return this >= x; },
-+  '=='  : function(x) { return this.valueOf() == x; },
-+  '!='  : function(x) { return this.valueOf() != x; },
-+  '===' : function(x) { return this.valueOf() === x; },
-+  '!==' : function(x) { return this.valueOf() !== x; },
-+  '&&'  : function(x) { return this.valueOf() && x; },
-+  '&'   : function(x) { return this & x; },
-+  '||'  : function(x) { return this.valueOf() || x; },
-+  '|'   : function(x) { return this | x; },
-+  'typeof': function(x) { return typeof this.valueOf() == x; },
-+  'instanceof': function(x) { return this instanceof x; }
-+};
-+
 +Function.ALL_METHODS = [
 +  "abbr", "abs", "accept", "acceptCharset", "accesskey", "acos", "action", "addEventListener", 
 +  "adjacentNode", "align", "alignWithTop", "alink", "alt", "anchor", "appendChild", "appendedNode", 
@@ -224,6 +124,97 @@ Index: src/reiterate.js
 +Function.ChainCollector.addMethods(Function.ALL_METHODS);
 +
 +var it = its = new Function.ChainCollector();
+Index: src/prototype.js
+===================================================================
+--- src/prototype.js	(revision 8381)
++++ src/prototype.js	(working copy)
+@@ -35,6 +35,6 @@
+ 
+ <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
+ 
+-<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
++<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js', 'chain_collector.js' %>
+ 
+ Element.addMethods();
+Index: src/reiterate.js
+===================================================================
+--- src/reiterate.js	(revision 0)
++++ src/reiterate.js	(revision 0)
+@@ -0,0 +1,91 @@
++Function.from = function(iterator) {
++  if (iterator.toFunction) return iterator.toFunction();
++  if (typeof iterator == 'function') return iterator;
++  if (typeof iterator == 'object') return Function.fromObject(iterator);
++  return function(x) { return x; };
++};
++
++String.prototype.toFunction = function() {
++  var properties = this.split('.');
++  if (!properties[0]) return function(x) { return x; };
++  return function(o) {
++    var object, member = o, key;
++    for (var i = 0, n = properties.length; i < n; i++) {
++      key = properties[i];
++      object = member;
++      member = object[key];
++      if (typeof member == 'function') member = member.apply(object);
++    }
++    return member;
++  };
++};
++
++Array.prototype.toFunction = function() {
++  var method = this[0], args = this.slice(1), op;
++  if (!method) return function(x) { return x; };
++  if (op = Function.OPERATORS[method]) method = op;
++  return function(o) {
++    var fn = (typeof method == 'function') ? method : o[method];
++    return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
++  };
++};
++
++Function.fromObject = function(object) {
++  var keys = [];
++  for (var field in object) { if (object.hasOwnProperty(field)) keys.push(field); }
++  if (keys.length === 0) return function(x) { return x; };
++  return function(o) {
++    var result = true, key, fn, args, op;
++    for (var i = 0, n = keys.length; i < n; i++) {
++      key = keys[i];
++      fn = o[key]; args = object[key];
++      if (op = Function.OPERATORS[key]) fn = op;
++      if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
++      result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
++    }
++    return result;
++  };
++};
++
++Hash.prototype.toFunction = function() {
++  return Function.fromObject(this._object || this);
++};
++
++Function.OPERATORS = {
++  '+'   : function(x) { return this + x; },
++  '-'   : function(x) { return this - x; },
++  '*'   : function(x) { return this * x; },
++  '/'   : function(x) { return this / x; },
++  '%'   : function(x) { return this % x; },
++  '<'   : function(x) { return this < x; },
++  '<='  : function(x) { return this <= x; },
++  '>'   : function(x) { return this > x; },
++  '>='  : function(x) { return this >= x; },
++  '=='  : function(x) { return this.valueOf() == x; },
++  '!='  : function(x) { return this.valueOf() != x; },
++  '===' : function(x) { return this.valueOf() === x; },
++  '!==' : function(x) { return this.valueOf() !== x; },
++  '&&'  : function(x) { return this.valueOf() && x; },
++  '&'   : function(x) { return this & x; },
++  '||'  : function(x) { return this.valueOf() || x; },
++  '|'   : function(x) { return this | x; },
++  'typeof': function(x) { return typeof this.valueOf() == x; },
++  'instanceof': function(x) { return this instanceof x; }
++};
 +
 +[Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
 +Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
@@ -243,7 +234,7 @@ Index: src/reiterate.js
 +});
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 8376)
+--- test/unit/enumerable.html	(revision 8381)
 +++ test/unit/enumerable.html	(working copy)
 @@ -32,6 +32,10 @@
  </tbody>

@@ -4,7 +4,8 @@ require 'fileutils'
 SOURCE_DIR = '.'
 PACKAGE_DIR = '.'
 PACKAGES = {
-  'reiterate'   => %w(reiterate.src)
+  'reiterate' => %w(reiterate.src),
+  'chain_collector' => %w(chain_collector.src)
 }
 
 task :default => :build
