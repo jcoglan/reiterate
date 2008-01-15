@@ -5,7 +5,7 @@ SOURCE_DIR = '.'
 PACKAGE_DIR = '.'
 PACKAGES = {
   'reiterate' => %w(reiterate.src),
-  'chain_collector' => %w(chain_collector.src)
+  'method_chain' => %w(method_chain.src)
 }
 
 task :default => :build

@@ -1,241 +1,32 @@
-Index: src/chain_collector.js
+Index: src/method_chain.js
 ===================================================================
---- src/chain_collector.js	(revision 0)
-+++ src/chain_collector.js	(revision 0)
-@@ -0,0 +1,122 @@
-+Function.ChainCollector = function(base) {
-+  var CLASS = arguments.callee;
-+  
-+  this.then = this.and = this;
-+  var queue = [], baseObject = base || {};
-+  
-+  this.____ = function(method, args) {
-+    queue.push({func: method, args: args});
-+  };
-+  
-+  this.fire = function(base) {
-+    var object = base || baseObject, method, property;
-+    for (var i = 0, n = queue.length; i < n; i++) {
-+      method = queue[i];
-+      if (object instanceof CLASS) {
-+        object.____(method.func, method.args);
-+        continue;
-+      }
-+      property = object[method.func];
-+      object = (typeof property == 'function')
-+          ? property.apply(object, method.args)
-+          : property;
-+    }
-+    return object;
-+  };
-+  
-+  this.toFunction = function() {
-+    var chain = this;
-+    if (it instanceof CLASS) it = new CLASS();
-+    if (its instanceof CLASS) its = new CLASS();
-+    return function(o) { return chain.fire(o); };
-+  };
-+};
-+
-+Function.ChainCollector.addMethods = function(object) {
-+  var methods = [], property, i, n, name;
-+  var self = this.prototype;
-+  
-+  var reservedNames = [], blank = new this();
-+  for (property in blank) reservedNames.push(property);
-+  var re = new RegExp('^(?:' + reservedNames.join('|') + ')$');
-+  
-+  for (property in object) {
-+    if (Number(property) != property)
-+      methods.push(property);
-+  }
-+  if (object instanceof Array) {
-+    for (i = 0, n = object.length; i < n; i++) {
-+      if (typeof object[i] == 'string')
-+        methods.push(object[i]);
-+    }
-+  }
-+  for (i = 0, n = methods.length ; i < n; i++)
-+    (function(name) {
-+      if (re.test(name)) return;
-+      self[name] = function() {
-+        this.____(name, arguments);
-+        return this;
-+      };
-+    })(methods[i]);
-+  
-+  if (object.prototype)
-+    this.addMethods(object.prototype);
-+};
-+
-+Function.ALL_METHODS = [
-+  "abbr", "abs", "accept", "acceptCharset", "accesskey", "acos", "action", "addEventListener", 
-+  "adjacentNode", "align", "alignWithTop", "alink", "alt", "anchor", "appendChild", "appendedNode", 
-+  "apply", "archive", "arguments", "arity", "asin", "atan", "atan2", "attrNode", "attributes", 
-+  "axis", "background", "bgcolor", "big", "blink", "blur", "bold", "border", "call", "caller", 
-+  "ceil", "cellpadding", "cellspacing", "char", "charAt", "charCodeAt", "charoff", "charset", 
-+  "checked", "childNodes", "cite", "className", "classid", "clear", "click", "clientHeight", 
-+  "clientLeft", "clientTop", "clientWidth", "cloneNode", "code", "codebase", "codetype", "color", 
-+  "cols", "colspan", "compact", "concat", "content", "coords", "cos", "data", "datetime", "declare", 
-+  "deep", "defer", "dir", "disabled", "dispatchEvent", "enctype", "event", "every", "exec", "exp", 
-+  "face", "filter", "firstChild", "fixed", "floor", "focus", "fontcolor", "fontsize", "forEach", 
-+  "frame", "frameborder", "fromCharCode", "getAttribute", "getAttributeNS", "getAttributeNode", 
-+  "getAttributeNodeNS", "getDate", "getDay", "getElementsByTagName", "getElementsByTagNameNS", 
-+  "getFullYear", "getHours", "getMilliseconds", "getMinutes", "getMonth", "getSeconds", "getTime", 
-+  "getTimezoneOffset", "getUTCDate", "getUTCDay", "getUTCFullYear", "getUTCHours", 
-+  "getUTCMilliseconds", "getUTCMinutes", "getUTCMonth", "getUTCSeconds", "getYear", "global", 
-+  "handler", "hasAttribute", "hasAttributeNS", "hasAttributes", "hasChildNodes", "hasOwnProperty", 
-+  "headers", "height", "href", "hreflang", "hspace", "htmlFor", "httpEquiv", "id", "ignoreCase", 
-+  "index", "indexOf", "innerHTML", "input", "insertBefore", "insertedNode", "isPrototypeOf", "ismap", 
-+  "italics", "join", "label", "lang", "language", "lastChild", "lastIndex", "lastIndexOf", "length", 
-+  "link", "listener", "localName", "log", "longdesc", "map", "marginheight", "marginwidth", "match", 
-+  "max", "maxlength", "media", "method", "min", "multiline", "multiple", "name", "namespace", 
-+  "namespaceURI", "nextSibling", "node", "nodeName", "nodeType", "nodeValue", "nohref", "noresize", 
-+  "normalize", "noshade", "now", "nowrap", "object", "offsetHeight", "offsetLeft", "offsetParent", 
-+  "offsetTop", "offsetWidth", "onblur", "onchange", "onclick", "ondblclick", "onfocus", "onkeydown", 
-+  "onkeypress", "onkeyup", "onload", "onmousedown", "onmousemove", "onmouseout", "onmouseover", 
-+  "onmouseup", "onreset", "onselect", "onsubmit", "onunload", "ownerDocument", "parentNode", "parse", 
-+  "pop", "pow", "prefix", "previousSibling", "profile", "prompt", "propertyIsEnumerable", "push", 
-+  "random", "readonly", "reduce", "reduceRight", "rel", "removeAttribute", "removeAttributeNS", 
-+  "removeAttributeNode", "removeChild", "removeEventListener", "removedNode", "replace", 
-+  "replaceChild", "replacedNode", "rev", "reverse", "round", "rows", "rowspan", "rules", "scheme", 
-+  "scope", "scrollHeight", "scrollIntoView", "scrollLeft", "scrollTop", "scrollWidth", "scrolling", 
-+  "search", "selected", "setAttribute", "setAttributeNS", "setAttributeNode", "setAttributeNodeNS", 
-+  "setDate", "setFullYear", "setHours", "setMilliseconds", "setMinutes", "setMonth", "setSeconds", 
-+  "setTime", "setUTCDate", "setUTCFullYear", "setUTCHours", "setUTCMilliseconds", "setUTCMinutes", 
-+  "setUTCMonth", "setUTCSeconds", "setYear", "shape", "shift", "sin", "size", "slice", "small", 
-+  "some", "sort", "source", "span", "splice", "split", "sqrt", "src", "standby", "start", "strike", 
-+  "style", "sub", "substr", "substring", "summary", "sup", "tabIndex", "tabindex", "tagName", "tan", 
-+  "target", "test", "text", "textContent", "title", "toArray", "toFunction", "toGMTString", 
-+  "toLocaleDateString", "toLocaleFormat", "toLocaleString", "toLocaleTimeString", "toLowerCase", 
-+  "toSource", "toString", "toUTCString", "toUpperCase", "type", "unshift", "unwatch", "useCapture", 
-+  "usemap", "valign", "value", "valueOf", "valuetype", "version", "vlink", "vspace", "watch", "width"
-+];
-+
-+[Ajax, Array, Class, Date, Element, Element.Methods, Element.Methods.Simulated,
-+Enumerable, Event, Form, Form.Element, Function, Hash, Insertion, Number, Object,
-+ObjectRange, PeriodicalExecuter, Position, Prototype, String, Template,
-+document].each(function(object) {
-+  var property;
-+  for (property in object) Function.ALL_METHODS.push(property);
-+  for (property in object.prototype || {}) Function.ALL_METHODS.push(property);
-+});
-+
-+Function.ALL_METHODS = Function.ALL_METHODS.uniq().sort();
-+Function.ChainCollector.addMethods(Function.ALL_METHODS);
-+
-+var it = its = new Function.ChainCollector();
+--- src/method_chain.js	(revision 0)
++++ src/method_chain.js	(revision 0)
+@@ -0,0 +1 @@
++Function.MethodChain=(function(){var h=function(e){var f=[],g=e||{};this.____=function(a,b){f.push({func:a,args:b})};this._=function(){var a=arguments[0],b=[];if(!/^(?:function|object)$/.test(typeof a))return this;for(var i=1,n=arguments.length;i<n;i++)b.push(arguments[i]);this.____(a,b);return this};this.fire=function(a){var b=a||g,c,d;loop:for(var i=0,n=f.length;i<n;i++){c=f[i];if(b instanceof h){b.____(c.func,c.args);continue}switch(typeof c.func){case'string':d=b[c.func];break;case'function':d=c.func;break;case'object':b=c.func;continue loop;break}b=(typeof d=='function')?d.apply(b,c.args):d}return b};this.toFunction=function(){var b=this;return function(a){return b.fire(a)}}};var j=(function(){var a=[],b;for(b in new h)a.push(b);return new RegExp('^(?:'+a.join('|')+')$')})();h.addMethods=function(b){var c=[],d,i,n,e=this.prototype;for(d in b){if(Number(d)!=d)c.push(d)}if(b instanceof Array){for(i=0,n=b.length;i<n;i++){if(typeof b[i]=='string')c.push(b[i])}}for(i=0,n=c.length;i<n;i++)(function(a){if(j.test(a))return;e[a]=function(){this.____(a,arguments);return this}})(c[i]);if(b.prototype)this.addMethods(b.prototype)};h.inherited=function(){throw new Error('MethodChain cannot be subclassed');};return h})();var it=its=function(){return new Function.MethodChain};Function.MethodChain.addMethods(["abbr","abs","accept","acceptCharset","accesskey","acos","action","addEventListener","adjacentNode","align","alignWithTop","alink","alt","anchor","appendChild","appendedNode","apply","archive","arguments","arity","asin","atan","atan2","attrNode","attributes","axis","background","bgcolor","big","blink","blur","bold","border","call","caller","ceil","cellpadding","cellspacing","char","charAt","charCodeAt","charoff","charset","checked","childNodes","cite","className","classid","clear","click","clientHeight","clientLeft","clientTop","clientWidth","cloneNode","code","codebase","codetype","color","cols","colspan","compact","concat","content","coords","cos","data","datetime","declare","deep","defer","dir","disabled","dispatchEvent","enctype","event","every","exec","exp","face","filter","firstChild","fixed","floor","focus","fontcolor","fontsize","forEach","frame","frameborder","fromCharCode","getAttribute","getAttributeNS","getAttributeNode","getAttributeNodeNS","getDate","getDay","getElementsByTagName","getElementsByTagNameNS","getFullYear","getHours","getMilliseconds","getMinutes","getMonth","getSeconds","getTime","getTimezoneOffset","getUTCDate","getUTCDay","getUTCFullYear","getUTCHours","getUTCMilliseconds","getUTCMinutes","getUTCMonth","getUTCSeconds","getYear","global","handler","hasAttribute","hasAttributeNS","hasAttributes","hasChildNodes","hasOwnProperty","headers","height","href","hreflang","hspace","htmlFor","httpEquiv","id","ignoreCase","index","indexOf","innerHTML","input","insertBefore","insertedNode","isPrototypeOf","ismap","italics","join","label","lang","language","lastChild","lastIndex","lastIndexOf","length","link","listener","localName","log","longdesc","map","marginheight","marginwidth","match","max","maxlength","media","method","min","multiline","multiple","name","namespace","namespaceURI","nextSibling","node","nodeName","nodeType","nodeValue","nohref","noresize","normalize","noshade","now","nowrap","object","offsetHeight","offsetLeft","offsetParent","offsetTop","offsetWidth","onblur","onchange","onclick","ondblclick","onfocus","onkeydown","onkeypress","onkeyup","onload","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onreset","onselect","onsubmit","onunload","ownerDocument","parentNode","parse","pop","pow","prefix","previousSibling","profile","prompt","propertyIsEnumerable","push","random","readonly","reduce","reduceRight","rel","removeAttribute","removeAttributeNS","removeAttributeNode","removeChild","removeEventListener","removedNode","replace","replaceChild","replacedNode","rev","reverse","round","rows","rowspan","rules","scheme","scope","scrollHeight","scrollIntoView","scrollLeft","scrollTop","scrollWidth","scrolling","search","selected","setAttribute","setAttributeNS","setAttributeNode","setAttributeNodeNS","setDate","setFullYear","setHours","setMilliseconds","setMinutes","setMonth","setSeconds","setTime","setUTCDate","setUTCFullYear","setUTCHours","setUTCMilliseconds","setUTCMinutes","setUTCMonth","setUTCSeconds","setYear","shape","shift","sin","size","slice","small","some","sort","source","span","splice","split","sqrt","src","standby","start","strike","style","sub","substr","substring","summary","sup","tabIndex","tabindex","tagName","tan","target","test","text","textContent","title","toArray","toFunction","toGMTString","toLocaleDateString","toLocaleFormat","toLocaleString","toLocaleTimeString","toLowerCase","toSource","toString","toUTCString","toUpperCase","type","unshift","unwatch","useCapture","usemap","valign","value","valueOf","valuetype","version","vlink","vspace","watch","width"]);[Ajax,Array,Class,Date,Element,Element.Methods,Element.Methods.Simulated,Enumerable,Event,Form,Form.Element,Function,Hash,Insertion,Number,Object,ObjectRange,PeriodicalExecuter,Position,Prototype,String,Template,document].each(Function.MethodChain.addMethods.bind(Function.MethodChain));
+\ No newline at end of file
 Index: src/prototype.js
 ===================================================================
---- src/prototype.js	(revision 8381)
+--- src/prototype.js	(revision 8644)
 +++ src/prototype.js	(working copy)
 @@ -35,6 +35,6 @@
  
  <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
  
 -<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
-+<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js', 'chain_collector.js' %>
++<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js', 'method_chain.js' %>
  
  Element.addMethods();
 Index: src/reiterate.js
 ===================================================================
 --- src/reiterate.js	(revision 0)
 +++ src/reiterate.js	(revision 0)
-@@ -0,0 +1,91 @@
-+Function.from = function(iterator) {
-+  if (iterator.toFunction) return iterator.toFunction();
-+  if (typeof iterator == 'function') return iterator;
-+  if (typeof iterator == 'object') return Function.fromObject(iterator);
-+  return function(x) { return x; };
-+};
-+
-+String.prototype.toFunction = function() {
-+  var properties = this.split('.');
-+  if (!properties[0]) return function(x) { return x; };
-+  return function(o) {
-+    var object, member = o, key;
-+    for (var i = 0, n = properties.length; i < n; i++) {
-+      key = properties[i];
-+      object = member;
-+      member = object[key];
-+      if (typeof member == 'function') member = member.apply(object);
-+    }
-+    return member;
-+  };
-+};
-+
-+Array.prototype.toFunction = function() {
-+  var method = this[0], args = this.slice(1), op;
-+  if (!method) return function(x) { return x; };
-+  if (op = Function.OPERATORS[method]) method = op;
-+  return function(o) {
-+    var fn = (typeof method == 'function') ? method : o[method];
-+    return (typeof fn == 'function') ? fn.apply(o, args) : undefined;
-+  };
-+};
-+
-+Function.fromObject = function(object) {
-+  var keys = [];
-+  for (var field in object) { if (object.hasOwnProperty(field)) keys.push(field); }
-+  if (keys.length === 0) return function(x) { return x; };
-+  return function(o) {
-+    var result = true, key, fn, args, op;
-+    for (var i = 0, n = keys.length; i < n; i++) {
-+      key = keys[i];
-+      fn = o[key]; args = object[key];
-+      if (op = Function.OPERATORS[key]) fn = op;
-+      if (typeof fn == 'function' && !(args instanceof Array)) args = [args];
-+      result = result && ((typeof fn == 'function') ? fn.apply(o, args) : fn == args);
-+    }
-+    return result;
-+  };
-+};
-+
-+Hash.prototype.toFunction = function() {
-+  return Function.fromObject(this._object || this);
-+};
-+
-+Function.OPERATORS = {
-+  '+'   : function(x) { return this + x; },
-+  '-'   : function(x) { return this - x; },
-+  '*'   : function(x) { return this * x; },
-+  '/'   : function(x) { return this / x; },
-+  '%'   : function(x) { return this % x; },
-+  '<'   : function(x) { return this < x; },
-+  '<='  : function(x) { return this <= x; },
-+  '>'   : function(x) { return this > x; },
-+  '>='  : function(x) { return this >= x; },
-+  '=='  : function(x) { return this.valueOf() == x; },
-+  '!='  : function(x) { return this.valueOf() != x; },
-+  '===' : function(x) { return this.valueOf() === x; },
-+  '!==' : function(x) { return this.valueOf() !== x; },
-+  '&&'  : function(x) { return this.valueOf() && x; },
-+  '&'   : function(x) { return this & x; },
-+  '||'  : function(x) { return this.valueOf() || x; },
-+  '|'   : function(x) { return this | x; },
-+  'typeof': function(x) { return typeof this.valueOf() == x; },
-+  'instanceof': function(x) { return this instanceof x; }
-+};
-+
-+[Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
-+Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
-+  $w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
-+    if (!object[method]) { return; }
-+    var wrapped = object[method];
-+    object[method] = function() {
-+      var args = $A(arguments);
-+      if (args[0]) args[0] = Function.from(args[0]);
-+      return wrapped.apply(this, args);
-+    };
-+  });
-+  
-+  object.count = function(iterator, context) {
-+    return this.findAll(iterator, context).length;
-+  };
-+});
+@@ -0,0 +1 @@
++Function.from=function(a){if(a.toFunction)return a.toFunction();if(typeof a=='function')return a;if(typeof a=='object')return Function.fromObject(a);return function(x){return x}};String.prototype.toFunction=function(){var d=this.split('.');if(!d[0])return function(x){return x};return function(o){var a,b=o,c;for(var i=0,n=d.length;i<n;i++){c=d[i];a=b;b=a[c];if(typeof b=='function')b=b.apply(a)}return b}};Array.prototype.toFunction=function(){var b=this[0],c=this.slice(1),d;if(!b)return function(x){return x};if(d=Function.OPERATORS[b])b=d;return function(o){var a=(typeof b=='function')?b:o[b];return(typeof a=='function')?a.apply(o,c):undefined}};Function.fromObject=function(f){var g=[];for(var h in f){if(f.hasOwnProperty(h))g.push(h)}if(g.length===0)return function(x){return x};return function(o){var a=true,b,c,d,e;for(var i=0,n=g.length;i<n;i++){b=g[i];c=o[b];d=f[b];if(e=Function.OPERATORS[b])c=e;if(typeof c=='function'&&!(d instanceof Array))d=[d];a=a&&((typeof c=='function')?c.apply(o,d):c==d)}return a}};Hash.prototype.toFunction=function(){return Function.fromObject(this._object||this)};Function.OPERATORS={'+':function(x){return this+x},'-':function(x){return this-x},'*':function(x){return this*x},'/':function(x){return this/x},'%':function(x){return this%x},'<':function(x){return this<x},'<=':function(x){return this<=x},'>':function(x){return this>x},'>=':function(x){return this>=x},'==':function(x){return this.valueOf()==x},'!=':function(x){return this.valueOf()!=x},'===':function(x){return this.valueOf()===x},'!==':function(x){return this.valueOf()!==x},'&&':function(x){return this.valueOf()&&x},'&':function(x){return this&x},'||':function(x){return this.valueOf()||x},'|':function(x){return this|x},'typeof':function(x){return typeof this.valueOf()==x},'instanceof':function(x){return this instanceof x}};[Enumerable,Array.prototype,Hash.prototype,ObjectRange.prototype,Ajax.Responders,Element.ClassNames.prototype].each(function(d){$w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(b){if(!d[b]){return}var c=d[b];d[b]=function(){var a=$A(arguments);if(a[0])a[0]=Function.from(a[0]);return c.apply(this,a)}});d.count=function(a,b){return this.findAll(a,b).length}});
+\ No newline at end of file
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 8381)
+--- test/unit/enumerable.html	(revision 8644)
 +++ test/unit/enumerable.html	(working copy)
 @@ -32,6 +32,10 @@
  </tbody>
@@ -362,7 +153,7 @@ Index: test/unit/enumerable.html
            return person.nickname.match(/no/);
          }).name);
 +      assertEqual(true, Fixtures.Radios.detect('checked').checked);
-+      assertEqual(true, Fixtures.Radios.detect(it.checked()).checked);
++      assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
 +      assertEqual('Bob', Fixtures.Records.detect('valid').name);
      }},
      
@@ -376,7 +167,7 @@ Index: test/unit/enumerable.html
 +      
 +      assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
 +      assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
-+      assertEqual(3, $$('div').findAll(it.hasClassName('finder')).length);
++      assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
 +      assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
 +      assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
 +      assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
@@ -388,7 +179,7 @@ Index: test/unit/enumerable.html
        assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
        assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
 +      assertEqual(12, Fixtures.Values.max('value'));
-+      assertEqual(12, Fixtures.Values.max(its.value()));
++      assertEqual(12, Fixtures.Values.max(its().value()));
      }},
      
      testMin: function() {with(this) {
@@ -429,7 +220,7 @@ Index: test/unit/enumerable.html
          }).pluck('nickname').join(', '));
 +        
 +      assertEqual('-5, 6, 9, 12',
-+        Fixtures.Values.sortBy(its.value()).map('value').join(', '));
++        Fixtures.Values.sortBy(its().value()).map('value').join(', '));
      }},
      
      testToArray: function() {with(this) {
