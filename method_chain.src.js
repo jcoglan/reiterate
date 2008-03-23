@@ -1,88 +1,85 @@
-Function.MethodChain = (function() {
+Function.MethodChain = function(base) {
+  var queue = [], baseObject = base || {};
   
-  var klass = function(base) {
-    var queue = [], baseObject = base || {};
-    
-    this.____ = function(method, args) {
-      queue.push({func: method, args: args});
-    };
-    
-    this.fire = function(base) {
-      var object = base || baseObject, method, property;
-      loop: for (var i = 0, n = queue.length; i < n; i++) {
-        method = queue[i];
-        if (object instanceof klass) {
-          object.____(method.func, method.args);
-          continue;
-        }
-        switch (typeof method.func) {
-          case 'string':    property = object[method.func];       break;
-          case 'function':  property = method.func;               break;
-          case 'object':    object = method.func; continue loop;  break;
-        }
-        object = (typeof property == 'function')
-            ? property.apply(object, method.args)
-            : property;
-      }
-      return object;
-    };
+  this.____ = function(method, args) {
+    queue.push({func: method, args: args});
   };
   
-  klass.prototype = {
-    _: function() {
-      var func = arguments[0], args = [];
-      if (!/^(?:function|object)$/.test(typeof func)) return this;
-      for (var i = 1, n = arguments.length; i < n; i++)
-        args.push(arguments[i]);
-      this.____(func, args);
-      return this;
-    },
-    
-    toFunction: function() {
-      var chain = this;
-      return function(object) { return chain.fire(object); };
+  this.fire = function(base) {
+    return Function.MethodChain.fire(queue, base || baseObject);
+  };
+};
+
+Function.MethodChain.fire = function(queue, object) {
+  var method, property, i, n;
+  loop: for (i = 0, n = queue.length; i < n; i++) {
+    method = queue[i];
+    if (object instanceof Function.MethodChain) {
+      object.____(method.func, method.args);
+      continue;
     }
-  };
-  
-  var reserved = (function() {
-    var names = [], key;
-    for (key in new klass) names.push(key);
-    return new RegExp('^(?:' + names.join('|') + ')$');
-  })();
-  
-  klass.addMethods = function(object) {
-    var methods = [], property, i, n,
-        self = this.prototype;
-    
-    for (property in object) {
-      if (Number(property) != property) methods.push(property);
+    switch (typeof method.func) {
+      case 'string':    property = object[method.func];       break;
+      case 'function':  property = method.func;               break;
+      case 'object':    object = method.func; continue loop;  break;
     }
-    if (object instanceof Array) {
-      for (i = 0, n = object.length; i < n; i++) {
-        if (typeof object[i] == 'string') methods.push(object[i]);
-      }
+    object = (typeof property == 'function')
+        ? property.apply(object, method.args)
+        : property;
+  }
+  return object;
+};
+
+Function.MethodChain.prototype = {
+  _: function() {
+    var base = arguments[0], args, i, n;
+    switch (typeof base) {
+      case 'object': case 'function':
+        args = [];
+        for (i = 1, n = arguments.length; i < n; i++) args.push(arguments[i]);
+        this.____(base, args);
     }
-    for (i = 0, n = methods.length; i < n; i++)
-      (function(name) {
-        if (reserved.test(name)) return;
-        self[name] = function() {
-          this.____(name, arguments);
-          return this;
-        };
-      })(methods[i]);
-    
-    if (object.prototype)
-      this.addMethods(object.prototype);
-  };
+    return this;
+  },
   
-  klass.inherited = function() {
-    throw new Error('MethodChain cannot be subclassed');
-  };
-  
-  return klass;
+  toFunction: function() {
+    var chain = this;
+    return function(object) { return chain.fire(object); };
+  }
+};
+
+Function.MethodChain.reserved = (function() {
+  var names = [], key;
+  for (key in new Function.MethodChain) names.push(key);
+  return new RegExp('^(?:' + names.join('|') + ')$');
 })();
 
-var it = its = function() { return new Function.MethodChain; };
+Function.MethodChain.addMethod = function(name) {
+  if (this.reserved.test(name)) return;
+  this.prototype[name] = function() {
+    this.____(name, arguments);
+    return this;
+  };
+};
+
+Function.MethodChain.addMethods = function(object) {
+  var methods = [], property, i, n;
+  
+  for (property in object)
+    Number(property) != property && methods.push(property);
+  
+  if (object instanceof Array) {
+    for (i = 0, n = object.length; i < n; i++)
+      typeof object[i] == 'string' && methods.push(object[i]);
+  }
+  for (i = 0, n = methods.length; i < n; i++)
+    this.addMethod(methods[i]);
+  
+  object.prototype &&
+    this.addMethods(object.prototype);
+};
+
+it = its = function() { return new Function.MethodChain; };
 
 Function.MethodChain.addMethods([
   "abbr", "abs", "accept", "acceptCharset", "accesskey", "acos", "action", "addEventListener", 

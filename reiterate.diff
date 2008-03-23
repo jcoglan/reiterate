@@ -3,11 +3,11 @@ Index: src/method_chain.js
 --- src/method_chain.js	(revision 0)
 +++ src/method_chain.js	(revision 0)
 @@ -0,0 +1 @@
-+Function.MethodChain=(function(){var h=function(e){var f=[],g=e||{};this.____=function(a,b){f.push({func:a,args:b})};this.fire=function(a){var b=a||g,c,d;loop:for(var i=0,n=f.length;i<n;i++){c=f[i];if(b instanceof h){b.____(c.func,c.args);continue}switch(typeof c.func){case'string':d=b[c.func];break;case'function':d=c.func;break;case'object':b=c.func;continue loop;break}b=(typeof d=='function')?d.apply(b,c.args):d}return b}};h.prototype={_:function(){var a=arguments[0],b=[];if(!/^(?:function|object)$/.test(typeof a))return this;for(var i=1,n=arguments.length;i<n;i++)b.push(arguments[i]);this.____(a,b);return this},toFunction:function(){var b=this;return function(a){return b.fire(a)}}};var j=(function(){var a=[],b;for(b in new h)a.push(b);return new RegExp('^(?:'+a.join('|')+')$')})();h.addMethods=function(b){var c=[],d,i,n,e=this.prototype;for(d in b){if(Number(d)!=d)c.push(d)}if(b instanceof Array){for(i=0,n=b.length;i<n;i++){if(typeof b[i]=='string')c.push(b[i])}}for(i=0,n=c.length;i<n;i++)(function(a){if(j.test(a))return;e[a]=function(){this.____(a,arguments);return this}})(c[i]);if(b.prototype)this.addMethods(b.prototype)};h.inherited=function(){throw new Error('MethodChain cannot be subclassed');};return h})();var it=its=function(){return new Function.MethodChain};Function.MethodChain.addMethods(["abbr","abs","accept","acceptCharset","accesskey","acos","action","addEventListener","adjacentNode","align","alignWithTop","alink","alt","anchor","appendChild","appendedNode","apply","archive","arguments","arity","asin","atan","atan2","attrNode","attributes","axis","background","bgcolor","big","blink","blur","bold","border","call","caller","ceil","cellpadding","cellspacing","char","charAt","charCodeAt","charoff","charset","checked","childNodes","cite","className","classid","clear","click","clientHeight","clientLeft","clientTop","clientWidth","cloneNode","code","codebase","codetype","color","cols","colspan","compact","concat","content","coords","cos","data","datetime","declare","deep","defer","dir","disabled","dispatchEvent","enctype","event","every","exec","exp","face","filter","firstChild","fixed","floor","focus","fontcolor","fontsize","forEach","frame","frameborder","fromCharCode","getAttribute","getAttributeNS","getAttributeNode","getAttributeNodeNS","getDate","getDay","getElementsByTagName","getElementsByTagNameNS","getFullYear","getHours","getMilliseconds","getMinutes","getMonth","getSeconds","getTime","getTimezoneOffset","getUTCDate","getUTCDay","getUTCFullYear","getUTCHours","getUTCMilliseconds","getUTCMinutes","getUTCMonth","getUTCSeconds","getYear","global","handler","hasAttribute","hasAttributeNS","hasAttributes","hasChildNodes","hasOwnProperty","headers","height","href","hreflang","hspace","htmlFor","httpEquiv","id","ignoreCase","index","indexOf","innerHTML","input","insertBefore","insertedNode","isPrototypeOf","ismap","italics","join","label","lang","language","lastChild","lastIndex","lastIndexOf","length","link","listener","localName","log","longdesc","map","marginheight","marginwidth","match","max","maxlength","media","method","min","multiline","multiple","name","namespace","namespaceURI","nextSibling","node","nodeName","nodeType","nodeValue","nohref","noresize","normalize","noshade","now","nowrap","object","offsetHeight","offsetLeft","offsetParent","offsetTop","offsetWidth","onblur","onchange","onclick","ondblclick","onfocus","onkeydown","onkeypress","onkeyup","onload","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onreset","onselect","onsubmit","onunload","ownerDocument","parentNode","parse","pop","pow","prefix","previousSibling","profile","prompt","propertyIsEnumerable","push","random","readonly","reduce","reduceRight","rel","removeAttribute","removeAttributeNS","removeAttributeNode","removeChild","removeEventListener","removedNode","replace","replaceChild","replacedNode","rev","reverse","round","rows","rowspan","rules","scheme","scope","scrollHeight","scrollIntoView","scrollLeft","scrollTop","scrollWidth","scrolling","search","selected","setAttribute","setAttributeNS","setAttributeNode","setAttributeNodeNS","setDate","setFullYear","setHours","setMilliseconds","setMinutes","setMonth","setSeconds","setTime","setUTCDate","setUTCFullYear","setUTCHours","setUTCMilliseconds","setUTCMinutes","setUTCMonth","setUTCSeconds","setYear","shape","shift","sin","size","slice","small","some","sort","source","span","splice","split","sqrt","src","standby","start","strike","style","sub","substr","substring","summary","sup","tabIndex","tabindex","tagName","tan","target","test","text","textContent","title","toArray","toFunction","toGMTString","toLocaleDateString","toLocaleFormat","toLocaleString","toLocaleTimeString","toLowerCase","toSource","toString","toUTCString","toUpperCase","type","unshift","unwatch","useCapture","usemap","valign","value","valueOf","valuetype","version","vlink","vspace","watch","width"]);[Ajax,Array,Class,Date,Element,Element.Methods,Element.Methods.Simulated,Enumerable,Event,Form,Form.Element,Function,Hash,Insertion,Number,Object,ObjectRange,PeriodicalExecuter,Position,Prototype,String,Template,document].each(Function.MethodChain.addMethods.bind(Function.MethodChain));
++Function.MethodChain=function(c){var d=[],e=c||{};this.____=function(a,b){d.push({func:a,args:b})};this.fire=function(a){return Function.MethodChain.fire(d,a||e)}};Function.MethodChain.fire=function(a,b){var c,d,i,n;loop:for(i=0,n=a.length;i<n;i++){c=a[i];if(b instanceof Function.MethodChain){b.____(c.func,c.args);continue}switch(typeof c.func){case'string':d=b[c.func];break;case'function':d=c.func;break;case'object':b=c.func;continue loop;break}b=(typeof d=='function')?d.apply(b,c.args):d}return b};Function.MethodChain.prototype={_:function(){var a=arguments[0],b,i,n;switch(typeof a){case'object':case'function':b=[];for(i=1,n=arguments.length;i<n;i++)b.push(arguments[i]);this.____(a,b)}return this},toFunction:function(){var b=this;return function(a){return b.fire(a)}}};Function.MethodChain.reserved=(function(){var a=[],b;for(b in new Function.MethodChain)a.push(b);return new RegExp('^(?:'+a.join('|')+')$')})();Function.MethodChain.addMethod=function(a){if(this.reserved.test(a))return;this.prototype[a]=function(){this.____(a,arguments);return this}};Function.MethodChain.addMethods=function(a){var b=[],c,i,n;for(c in a)Number(c)!=c&&b.push(c);if(a instanceof Array){for(i=0,n=a.length;i<n;i++)typeof a[i]=='string'&&b.push(a[i])}for(i=0,n=b.length;i<n;i++)this.addMethod(b[i]);a.prototype&&this.addMethods(a.prototype)};it=its=function(){return new Function.MethodChain};Function.MethodChain.addMethods(["abbr","abs","accept","acceptCharset","accesskey","acos","action","addEventListener","adjacentNode","align","alignWithTop","alink","alt","anchor","appendChild","appendedNode","apply","archive","arguments","arity","asin","atan","atan2","attrNode","attributes","axis","background","bgcolor","big","blink","blur","bold","border","call","caller","ceil","cellpadding","cellspacing","char","charAt","charCodeAt","charoff","charset","checked","childNodes","cite","className","classid","clear","click","clientHeight","clientLeft","clientTop","clientWidth","cloneNode","code","codebase","codetype","color","cols","colspan","compact","concat","content","coords","cos","data","datetime","declare","deep","defer","dir","disabled","dispatchEvent","enctype","event","every","exec","exp","face","filter","firstChild","fixed","floor","focus","fontcolor","fontsize","forEach","frame","frameborder","fromCharCode","getAttribute","getAttributeNS","getAttributeNode","getAttributeNodeNS","getDate","getDay","getElementsByTagName","getElementsByTagNameNS","getFullYear","getHours","getMilliseconds","getMinutes","getMonth","getSeconds","getTime","getTimezoneOffset","getUTCDate","getUTCDay","getUTCFullYear","getUTCHours","getUTCMilliseconds","getUTCMinutes","getUTCMonth","getUTCSeconds","getYear","global","handler","hasAttribute","hasAttributeNS","hasAttributes","hasChildNodes","hasOwnProperty","headers","height","href","hreflang","hspace","htmlFor","httpEquiv","id","ignoreCase","index","indexOf","innerHTML","input","insertBefore","insertedNode","isPrototypeOf","ismap","italics","join","label","lang","language","lastChild","lastIndex","lastIndexOf","length","link","listener","localName","log","longdesc","map","marginheight","marginwidth","match","max","maxlength","media","method","min","multiline","multiple","name","namespace","namespaceURI","nextSibling","node","nodeName","nodeType","nodeValue","nohref","noresize","normalize","noshade","now","nowrap","object","offsetHeight","offsetLeft","offsetParent","offsetTop","offsetWidth","onblur","onchange","onclick","ondblclick","onfocus","onkeydown","onkeypress","onkeyup","onload","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onreset","onselect","onsubmit","onunload","ownerDocument","parentNode","parse","pop","pow","prefix","previousSibling","profile","prompt","propertyIsEnumerable","push","random","readonly","reduce","reduceRight","rel","removeAttribute","removeAttributeNS","removeAttributeNode","removeChild","removeEventListener","removedNode","replace","replaceChild","replacedNode","rev","reverse","round","rows","rowspan","rules","scheme","scope","scrollHeight","scrollIntoView","scrollLeft","scrollTop","scrollWidth","scrolling","search","selected","setAttribute","setAttributeNS","setAttributeNode","setAttributeNodeNS","setDate","setFullYear","setHours","setMilliseconds","setMinutes","setMonth","setSeconds","setTime","setUTCDate","setUTCFullYear","setUTCHours","setUTCMilliseconds","setUTCMinutes","setUTCMonth","setUTCSeconds","setYear","shape","shift","sin","size","slice","small","some","sort","source","span","splice","split","sqrt","src","standby","start","strike","style","sub","substr","substring","summary","sup","tabIndex","tabindex","tagName","tan","target","test","text","textContent","title","toArray","toFunction","toGMTString","toLocaleDateString","toLocaleFormat","toLocaleString","toLocaleTimeString","toLowerCase","toSource","toString","toUTCString","toUpperCase","type","unshift","unwatch","useCapture","usemap","valign","value","valueOf","valuetype","version","vlink","vspace","watch","width"]);[Ajax,Array,Class,Date,Element,Element.Methods,Element.Methods.Simulated,Enumerable,Event,Form,Form.Element,Function,Hash,Insertion,Number,Object,ObjectRange,PeriodicalExecuter,Position,Prototype,String,Template,document].each(Function.MethodChain.addMethods.bind(Function.MethodChain));
 \ No newline at end of file
 Index: src/prototype.js
 ===================================================================
---- src/prototype.js	(revision 8747)
+--- src/prototype.js	(revision 9082)
 +++ src/prototype.js	(working copy)
 @@ -35,6 +35,6 @@
  
@@ -26,9 +26,9 @@ Index: src/reiterate.js
 \ No newline at end of file
 Index: test/unit/enumerable.html
 ===================================================================
---- test/unit/enumerable.html	(revision 8747)
+--- test/unit/enumerable.html	(revision 9082)
 +++ test/unit/enumerable.html	(working copy)
-@@ -32,6 +32,10 @@
+@@ -26,6 +26,10 @@
  </tbody>
  </table>
  
@@ -39,7 +39,7 @@ Index: test/unit/enumerable.html
  <!-- Tests follow -->
  <script type="text/javascript" language="javascript" charset="utf-8">
  // <![CDATA[
-@@ -45,6 +49,20 @@
+@@ -39,6 +43,20 @@
      
      Nicknames: $w('sam- noradio htonl Ulysses'),
      
@@ -60,78 +60,78 @@ Index: test/unit/enumerable.html
      Basic: [1, 2, 3],
      
      Primes: [
-@@ -108,6 +126,43 @@
+@@ -102,6 +120,43 @@
          return value == this.target_value;
        }, { target_value: 2 }));
-     }},
+     },
 +    
-+    testBinaryOperators: function() {with(this) {
-+      assertEqual('3, 3', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['==', 3]).join(', '));
-+      assertEqual('9, 7, 8', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['>', 5]).join(', '));
-+      assertEqual('19, 13, 21, 15, 17', [7, 1, 9, 3, 5].map(['+', 12]).join(', '));
-+      assertEqual('2, 7, 3, 6', [8, 28, 12, 24].map(['/', 4]).join(', '));
++    testBinaryOperators: function() {
++      this.assertEqual('3, 3', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['==', 3]).join(', '));
++      this.assertEqual('9, 7, 8', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['>', 5]).join(', '));
++      this.assertEqual('19, 13, 21, 15, 17', [7, 1, 9, 3, 5].map(['+', 12]).join(', '));
++      this.assertEqual('2, 7, 3, 6', [8, 28, 12, 24].map(['/', 4]).join(', '));
 +      
-+      assertEqual('7, 8, 5', [9, 3, 1, 7, 8, 5, 3, 0].findAll({'>': 3, '<=': 8}).join(', '));
-+      assertEqual('1, 3, 1, 3, 0, 1, 3, 0', [9, 3, 1, 7, 8, 5, 3, 0].map(['%', 4]).join(', '));
++      this.assertEqual('7, 8, 5', [9, 3, 1, 7, 8, 5, 3, 0].findAll({'>': 3, '<=': 8}).join(', '));
++      this.assertEqual('1, 3, 1, 3, 0, 1, 3, 0', [9, 3, 1, 7, 8, 5, 3, 0].map(['%', 4]).join(', '));
 +      
-+      assertEqual('13, ruby, foo, 77, foo, foo',
++      this.assertEqual('13, ruby, foo, 77, foo, foo',
 +        [13, 'ruby', '', 77, false, 0].map(['||', 'foo']).join(', '));
 +      
 +      var object = {foo: 'bar'};
 +      var stuff = [8,2,'sandwich',4,4.2,object,'4',4,''];
 +      
-+      assertEqual('4, 4', stuff.findAll(['===', 4]).join(', '));
-+      assertEqual('4, 4, 4', stuff.findAll(['==', 4]).join(', '));
++      this.assertEqual('4, 4', stuff.findAll(['===', 4]).join(', '));
++      this.assertEqual('4, 4, 4', stuff.findAll(['==', 4]).join(', '));
 +      
-+      assertEqual('sandwich, 4, ', stuff.findAll(['instanceof', String]).join(', '));
-+      assertEqual(1, stuff.findAll(['==', 'sandwich']).length);
-+      assertEqual(1, stuff.findAll(['===', '4']).length);
++      this.assertEqual('sandwich, 4, ', stuff.findAll(['instanceof', String]).join(', '));
++      this.assertEqual(1, stuff.findAll(['==', 'sandwich']).length);
++      this.assertEqual(1, stuff.findAll(['===', '4']).length);
 +      
-+      assertEqual('bar', stuff.find(['typeof', 'object']).foo);
-+      assertEqual('bar', stuff.find(['==', object]).foo);
++      this.assertEqual('bar', stuff.find(['typeof', 'object']).foo);
++      this.assertEqual('bar', stuff.find(['==', object]).foo);
 +      
-+      assertEqual('8, 2, 4, 4.2, 4', stuff.findAll({'instanceof': Number}).join(', '));
-+      assertEqual('4, 4', stuff.findAll({'instanceof': Number, '==': 4}).join(', '));
-+      assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
-+    }},
++      this.assertEqual('8, 2, 4, 4.2, 4', stuff.findAll({'instanceof': Number}).join(', '));
++      this.assertEqual('4, 4', stuff.findAll({'instanceof': Number, '==': 4}).join(', '));
++      this.assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
++    },
 +    
-+    testCount: function() {with(this) {
-+      assertEqual(7, $R(9,24).count({'>': 12, '<=': 19}));
++    testCount: function() {
++      this.assertEqual(7, $R(9,24).count({'>': 12, '<=': 19}));
 +      this.prop = "reiterate";
 +      var words = $w('could I please just reiterate slowly');
-+      assertEqual(1, words.count(function(w) { return w == this.prop; }, this));
-+    }},
++      this.assertEqual(1, words.count(function(w) { return w == this.prop; }, this));
++    },
  
-     testAny: function() {with(this) {
-       assert(!([].any()));
-@@ -122,6 +177,8 @@
-       assert(!Fixtures.Basic.any(function(value) {
+     testAny: function() {
+       this.assert(!([].any()));
+@@ -116,6 +171,8 @@
+       this.assert(!Fixtures.Basic.any(function(value) {
          return value > 5;
        }));
-+      assert(Fixtures.Radios.any('checked'));
-+      assert(Fixtures.Records.any('valid'));
-     }},
++      this.assert(Fixtures.Radios.any('checked'));
++      this.assert(Fixtures.Records.any('valid'));
+     },
      
-     testAll: function() {with(this) {
-@@ -137,6 +194,9 @@
-       assert(!Fixtures.Basic.all(function(value) {
+     testAll: function() {
+@@ -131,6 +188,9 @@
+       this.assert(!Fixtures.Basic.all(function(value) {
          return value > 1;
        }));
-+      assert([{checked: true}, {checked: 12}, {checked: 'foo'}].all('checked'));
-+      assert(!Fixtures.Radios.all('checked'));
-+      assert(!Fixtures.Records.all('valid'));
-     }},
++      this.assert([{checked: true}, {checked: 12}, {checked: 'foo'}].all('checked'));
++      this.assert(!Fixtures.Radios.all('checked'));
++      this.assert(!Fixtures.Records.all('valid'));
+     },
      
-     testCollect: function() {with(this) {
-@@ -146,6 +206,24 @@
+     testCollect: function() {
+@@ -140,6 +200,24 @@
          }).join(", "));
        
-       assertEqual(26,  Fixtures.Primes.map().length);
+       this.assertEqual(26,  Fixtures.Primes.map().length);
 +      
-+      assertEqual(Fixtures.Nicknames.join(', '),
++      this.assertEqual(Fixtures.Nicknames.join(', '),
 +        Fixtures.People.collect('nickname').join(', '));
 +      
-+      assertEqual(Fixtures.Values.pluck('value').join(', '),
++      this.assertEqual(Fixtures.Values.pluck('value').join(', '),
 +        Fixtures.Nested.collect('value.integer').join(', '));
 +      
 +      var set = Fixtures.Values.collect(function(v) {
@@ -140,87 +140,87 @@ Index: test/unit/enumerable.html
 +          k: v.value
 +        };
 +      });
-+      assertEqual(Fixtures.Values.pluck('value').join(', '),
++      this.assertEqual(Fixtures.Values.pluck('value').join(', '),
 +        set.collect('value.quantity').join(', '));
 +      
-+      assertEqual('plums, apples, oranges',
++      this.assertEqual('plums, apples, oranges',
 +        ['apples', 'oranges', 'plums'].sortBy({replace: [/^./, '']}).join(', '));
-     }},
+     },
      
-     testDetect: function() {with(this) {
-@@ -153,6 +231,9 @@
+     testDetect: function() {
+@@ -147,6 +225,9 @@
          Fixtures.People.detect(function(person) {
            return person.nickname.match(/no/);
          }).name);
-+      assertEqual(true, Fixtures.Radios.detect('checked').checked);
-+      assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
-+      assertEqual('Bob', Fixtures.Records.detect('valid').name);
-     }},
++      this.assertEqual(true, Fixtures.Radios.detect('checked').checked);
++      this.assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
++      this.assertEqual('Bob', Fixtures.Records.detect('valid').name);
+     },
      
-     testEachSlice: function() {with(this) {
-@@ -181,6 +262,15 @@
-     testFindAll: function() {with(this) {
-       assertEqual(Fixtures.Primes.join(', '),
+     testEachSlice: function() {
+@@ -178,6 +259,15 @@
+     testFindAll: function() {
+       this.assertEqual(Fixtures.Primes.join(', '),
          Fixtures.Z.findAll(prime).join(', '));
-+      assertEqual(5, Fixtures.Radios.findAll('checked').length);
-+      assertEqual(2, $$('div.finder').findAll('visible').length);
++      this.assertEqual(5, Fixtures.Radios.findAll('checked').length);
++      this.assertEqual(2, $$('div.finder').findAll('visible').length);
 +      
-+      assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
-+      assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
-+      assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
-+      assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
-+      assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
-+      assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
-     }},
++      this.assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
++      this.assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
++      this.assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
++      this.assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
++      this.assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
++      this.assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
+     },
      
-     testGrep: function() {with(this) {
-@@ -257,12 +347,15 @@
-       assertEqual(97, Fixtures.Primes.max());
-       assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
-       assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
-+      assertEqual(12, Fixtures.Values.max('value'));
-+      assertEqual(12, Fixtures.Values.max(its().value()));
-     }},
+     testGrep: function() {
+@@ -254,12 +344,15 @@
+       this.assertEqual(97, Fixtures.Primes.max());
+       this.assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
+       this.assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
++      this.assertEqual(12, Fixtures.Values.max('value'));
++      this.assertEqual(12, Fixtures.Values.max(its().value()));
+     },
      
-     testMin: function() {with(this) {
-       assertEqual(1, Fixtures.Z.min());
-       assertEqual(0, [  1, 2, 3, 4, 5, 6, 7, 8, 0, 9 ].min());
-       assertEqual('Ulysses', Fixtures.Nicknames.min()); // ?U < ?h
-+      assertEqual(-5, Fixtures.Values.min('value'));
-     }},
+     testMin: function() {
+       this.assertEqual(1, Fixtures.Z.min());
+       this.assertEqual(0, [  1, 2, 3, 4, 5, 6, 7, 8, 0, 9 ].min());
+       this.assertEqual('Ulysses', Fixtures.Nicknames.min()); // ?U < ?h
++      this.assertEqual(-5, Fixtures.Values.min('value'));
+     },
      
-     testPartition: function() {with(this) {
-@@ -273,6 +366,10 @@
-       assertEqual(2, result.length);
-       assertEqual('sam-, htonl', result[0].join(', '));
-       assertEqual('noradio, Ulysses', result[1].join(', '));
+     testPartition: function() {
+@@ -270,6 +363,10 @@
+       this.assertEqual(2, result.length);
+       this.assertEqual('sam-, htonl', result[0].join(', '));
+       this.assertEqual('noradio, Ulysses', result[1].join(', '));
 +      
 +      result = Fixtures.Radios.partition('checked');
-+      assertEqual(5, result[0].length);
-+      assertEqual(3, result[1].length);
-     }},
++      this.assertEqual(5, result[0].length);
++      this.assertEqual(3, result[1].length);
+     },
      
-     testPluck: function() {with(this) {
-@@ -284,6 +381,12 @@
-       assertEqual(0, 
+     testPluck: function() {
+@@ -281,6 +378,12 @@
+       this.assertEqual(0, 
          Fixtures.Nicknames.reject(Prototype.K).length);
          
-+      assertEqual(3,
++      this.assertEqual(3,
 +        Fixtures.Radios.reject('checked').length);
 +        
-+      assertEqual(1,
++      this.assertEqual(1,
 +        Fixtures.Records.reject('valid').length);
 +        
-       assertEqual('sam-, noradio, htonl',
+       this.assertEqual('sam-, noradio, htonl',
          Fixtures.Nicknames.reject(function(nickname) {
            return nickname != nickname.toLowerCase();
-@@ -295,6 +398,9 @@
+@@ -292,6 +395,9 @@
          Fixtures.People.sortBy(function(value) {
            return value.nickname.toLowerCase();
          }).pluck('nickname').join(', '));
 +        
-+      assertEqual('-5, 6, 9, 12',
++      this.assertEqual('-5, 6, 9, 12',
 +        Fixtures.Values.sortBy(its().value()).map('value').join(', '));
-     }},
+     },
      
-     testToArray: function() {with(this) {
+     testToArray: function() {
