@@ -123,8 +123,7 @@ Function.MethodChain.addMethods([
   "toLocaleDateString", "toLocaleFormat", "toLocaleString", "toLocaleTimeString", "toLowerCase", 
   "toSource", "toString", "toUTCString", "toUpperCase", "type", "unshift", "unwatch", "useCapture", 
   "usemap", "valign", "value", "valueOf", "valuetype", "version", "vlink", "vspace", "watch", "width"
-]);
-
+]);
 [Ajax, Array, Class, Date, Element, Element.Methods, Element.Methods.Simulated,
 Enumerable, Event, Form, Form.Element, Function, Hash, Insertion, Number, Object,
 ObjectRange, PeriodicalExecuter, Position, Prototype, String, Template,

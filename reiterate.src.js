@@ -76,7 +76,7 @@ Function.OPERATORS = {
 [Enumerable, Array.prototype, Hash.prototype, ObjectRange.prototype,
 Ajax.Responders, Element.ClassNames.prototype].each(function(object) {
   $w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(method) {
-    if (!object[method]) { return; }
+    if (!object[method]) return;
     var wrapped = object[method];
     object[method] = function() {
       var args = $A(arguments);

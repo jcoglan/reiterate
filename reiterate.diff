@@ -1,226 +1,166 @@
-Index: src/method_chain.js
-===================================================================
---- src/method_chain.js	(revision 0)
-+++ src/method_chain.js	(revision 0)
+diff --git a/src/method_chain.js b/src/method_chain.js
+new file mode 100644
+index 0000000..70215c3
+--- /dev/null
++++ b/src/method_chain.js
 @@ -0,0 +1 @@
-+Function.MethodChain=function(c){var d=[],e=c||{};this.____=function(a,b){d.push({func:a,args:b})};this.fire=function(a){return Function.MethodChain.fire(d,a||e)}};Function.MethodChain.fire=function(a,b){var c,d,i,n;loop:for(i=0,n=a.length;i<n;i++){c=a[i];if(b instanceof Function.MethodChain){b.____(c.func,c.args);continue}switch(typeof c.func){case'string':d=b[c.func];break;case'function':d=c.func;break;case'object':b=c.func;continue loop;break}b=(typeof d=='function')?d.apply(b,c.args):d}return b};Function.MethodChain.prototype={_:function(){var a=arguments[0],b,i,n;switch(typeof a){case'object':case'function':b=[];for(i=1,n=arguments.length;i<n;i++)b.push(arguments[i]);this.____(a,b)}return this},toFunction:function(){var b=this;return function(a){return b.fire(a)}}};Function.MethodChain.reserved=(function(){var a=[],b;for(b in new Function.MethodChain)a.push(b);return new RegExp('^(?:'+a.join('|')+')$')})();Function.MethodChain.addMethod=function(a){if(this.reserved.test(a))return;this.prototype[a]=function(){this.____(a,arguments);return this}};Function.MethodChain.addMethods=function(a){var b=[],c,i,n;for(c in a)Number(c)!=c&&b.push(c);if(a instanceof Array){for(i=0,n=a.length;i<n;i++)typeof a[i]=='string'&&b.push(a[i])}for(i=0,n=b.length;i<n;i++)this.addMethod(b[i]);a.prototype&&this.addMethods(a.prototype)};it=its=function(){return new Function.MethodChain};Function.MethodChain.addMethods(["abbr","abs","accept","acceptCharset","accesskey","acos","action","addEventListener","adjacentNode","align","alignWithTop","alink","alt","anchor","appendChild","appendedNode","apply","archive","arguments","arity","asin","atan","atan2","attrNode","attributes","axis","background","bgcolor","big","blink","blur","bold","border","call","caller","ceil","cellpadding","cellspacing","char","charAt","charCodeAt","charoff","charset","checked","childNodes","cite","className","classid","clear","click","clientHeight","clientLeft","clientTop","clientWidth","cloneNode","code","codebase","codetype","color","cols","colspan","compact","concat","content","coords","cos","data","datetime","declare","deep","defer","dir","disabled","dispatchEvent","enctype","event","every","exec","exp","face","filter","firstChild","fixed","floor","focus","fontcolor","fontsize","forEach","frame","frameborder","fromCharCode","getAttribute","getAttributeNS","getAttributeNode","getAttributeNodeNS","getDate","getDay","getElementsByTagName","getElementsByTagNameNS","getFullYear","getHours","getMilliseconds","getMinutes","getMonth","getSeconds","getTime","getTimezoneOffset","getUTCDate","getUTCDay","getUTCFullYear","getUTCHours","getUTCMilliseconds","getUTCMinutes","getUTCMonth","getUTCSeconds","getYear","global","handler","hasAttribute","hasAttributeNS","hasAttributes","hasChildNodes","hasOwnProperty","headers","height","href","hreflang","hspace","htmlFor","httpEquiv","id","ignoreCase","index","indexOf","innerHTML","input","insertBefore","insertedNode","isPrototypeOf","ismap","italics","join","label","lang","language","lastChild","lastIndex","lastIndexOf","length","link","listener","localName","log","longdesc","map","marginheight","marginwidth","match","max","maxlength","media","method","min","multiline","multiple","name","namespace","namespaceURI","nextSibling","node","nodeName","nodeType","nodeValue","nohref","noresize","normalize","noshade","now","nowrap","object","offsetHeight","offsetLeft","offsetParent","offsetTop","offsetWidth","onblur","onchange","onclick","ondblclick","onfocus","onkeydown","onkeypress","onkeyup","onload","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onreset","onselect","onsubmit","onunload","ownerDocument","parentNode","parse","pop","pow","prefix","previousSibling","profile","prompt","propertyIsEnumerable","push","random","readonly","reduce","reduceRight","rel","removeAttribute","removeAttributeNS","removeAttributeNode","removeChild","removeEventListener","removedNode","replace","replaceChild","replacedNode","rev","reverse","round","rows","rowspan","rules","scheme","scope","scrollHeight","scrollIntoView","scrollLeft","scrollTop","scrollWidth","scrolling","search","selected","setAttribute","setAttributeNS","setAttributeNode","setAttributeNodeNS","setDate","setFullYear","setHours","setMilliseconds","setMinutes","setMonth","setSeconds","setTime","setUTCDate","setUTCFullYear","setUTCHours","setUTCMilliseconds","setUTCMinutes","setUTCMonth","setUTCSeconds","setYear","shape","shift","sin","size","slice","small","some","sort","source","span","splice","split","sqrt","src","standby","start","strike","style","sub","substr","substring","summary","sup","tabIndex","tabindex","tagName","tan","target","test","text","textContent","title","toArray","toFunction","toGMTString","toLocaleDateString","toLocaleFormat","toLocaleString","toLocaleTimeString","toLowerCase","toSource","toString","toUTCString","toUpperCase","type","unshift","unwatch","useCapture","usemap","valign","value","valueOf","valuetype","version","vlink","vspace","watch","width"]);[Ajax,Array,Class,Date,Element,Element.Methods,Element.Methods.Simulated,Enumerable,Event,Form,Form.Element,Function,Hash,Insertion,Number,Object,ObjectRange,PeriodicalExecuter,Position,Prototype,String,Template,document].each(Function.MethodChain.addMethods.bind(Function.MethodChain));
-\ No newline at end of file
-Index: src/prototype.js
-===================================================================
---- src/prototype.js	(revision 9082)
-+++ src/prototype.js	(working copy)
-@@ -35,6 +35,6 @@
++Function.MethodChain=function(d){var c=[],e=d||{};this.____=function(a,b){c.push({func:a,args:b})};this.fire=function(a){return Function.MethodChain.fire(c,a||e)}};Function.MethodChain.fire=function(a,b){var d,c,e,f;loop:for(e=0,f=a.length;e<f;e++){d=a[e];if(b instanceof Function.MethodChain){b.____(d.func,d.args);continue}switch(typeof d.func){case'string':c=b[d.func];break;case'function':c=d.func;break;case'object':b=d.func;continue loop;break}b=(typeof c=='function')?c.apply(b,d.args):c}return b};Function.MethodChain.prototype={_:function(){var a=arguments[0],b,d,c;switch(typeof a){case'object':case'function':b=[];for(d=1,c=arguments.length;d<c;d++)b.push(arguments[d]);this.____(a,b)}return this},toFunction:function(){var b=this;return function(a){return b.fire(a)}}};Function.MethodChain.reserved=(function(){var a=[],b;for(b in new Function.MethodChain)a.push(b);return new RegExp('^(?:'+a.join('|')+')$')})();Function.MethodChain.addMethod=function(a){if(this.reserved.test(a))return;this.prototype[a]=function(){this.____(a,arguments);return this}};Function.MethodChain.addMethods=function(a){var b=[],d,c,e;for(d in a)Number(d)!=d&&b.push(d);if(a instanceof Array){for(c=0,e=a.length;c<e;c++)typeof a[c]=='string'&&b.push(a[c])}for(c=0,e=b.length;c<e;c++)this.addMethod(b[c]);a.prototype&&this.addMethods(a.prototype)};it=its=function(){return new Function.MethodChain};Function.MethodChain.addMethods(["abbr","abs","accept","acceptCharset","accesskey","acos","action","addEventListener","adjacentNode","align","alignWithTop","alink","alt","anchor","appendChild","appendedNode","apply","archive","arguments","arity","asin","atan","atan2","attrNode","attributes","axis","background","bgcolor","big","blink","blur","bold","border","call","caller","ceil","cellpadding","cellspacing","char","charAt","charCodeAt","charoff","charset","checked","childNodes","cite","className","classid","clear","click","clientHeight","clientLeft","clientTop","clientWidth","cloneNode","code","codebase","codetype","color","cols","colspan","compact","concat","content","coords","cos","data","datetime","declare","deep","defer","dir","disabled","dispatchEvent","enctype","event","every","exec","exp","face","filter","firstChild","fixed","floor","focus","fontcolor","fontsize","forEach","frame","frameborder","fromCharCode","getAttribute","getAttributeNS","getAttributeNode","getAttributeNodeNS","getDate","getDay","getElementsByTagName","getElementsByTagNameNS","getFullYear","getHours","getMilliseconds","getMinutes","getMonth","getSeconds","getTime","getTimezoneOffset","getUTCDate","getUTCDay","getUTCFullYear","getUTCHours","getUTCMilliseconds","getUTCMinutes","getUTCMonth","getUTCSeconds","getYear","global","handler","hasAttribute","hasAttributeNS","hasAttributes","hasChildNodes","hasOwnProperty","headers","height","href","hreflang","hspace","htmlFor","httpEquiv","id","ignoreCase","index","indexOf","innerHTML","input","insertBefore","insertedNode","isPrototypeOf","ismap","italics","join","label","lang","language","lastChild","lastIndex","lastIndexOf","length","link","listener","localName","log","longdesc","map","marginheight","marginwidth","match","max","maxlength","media","method","min","multiline","multiple","name","namespace","namespaceURI","nextSibling","node","nodeName","nodeType","nodeValue","nohref","noresize","normalize","noshade","now","nowrap","object","offsetHeight","offsetLeft","offsetParent","offsetTop","offsetWidth","onblur","onchange","onclick","ondblclick","onfocus","onkeydown","onkeypress","onkeyup","onload","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onreset","onselect","onsubmit","onunload","ownerDocument","parentNode","parse","pop","pow","prefix","previousSibling","profile","prompt","propertyIsEnumerable","push","random","readonly","reduce","reduceRight","rel","removeAttribute","removeAttributeNS","removeAttributeNode","removeChild","removeEventListener","removedNode","replace","replaceChild","replacedNode","rev","reverse","round","rows","rowspan","rules","scheme","scope","scrollHeight","scrollIntoView","scrollLeft","scrollTop","scrollWidth","scrolling","search","selected","setAttribute","setAttributeNS","setAttributeNode","setAttributeNodeNS","setDate","setFullYear","setHours","setMilliseconds","setMinutes","setMonth","setSeconds","setTime","setUTCDate","setUTCFullYear","setUTCHours","setUTCMilliseconds","setUTCMinutes","setUTCMonth","setUTCSeconds","setYear","shape","shift","sin","size","slice","small","some","sort","source","span","splice","split","sqrt","src","standby","start","strike","style","sub","substr","substring","summary","sup","tabIndex","tabindex","tagName","tan","target","test","text","textContent","title","toArray","toFunction","toGMTString","toLocaleDateString","toLocaleFormat","toLocaleString","toLocaleTimeString","toLowerCase","toSource","toString","toUTCString","toUpperCase","type","unshift","unwatch","useCapture","usemap","valign","value","valueOf","valuetype","version","vlink","vspace","watch","width"]);[Ajax,Array,Class,Date,Element,Element.Methods,Element.Methods.Simulated,Enumerable,Event,Form,Form.Element,Function,Hash,Insertion,Number,Object,ObjectRange,PeriodicalExecuter,Position,Prototype,String,Template,document].each(Function.MethodChain.addMethods.bind(Function.MethodChain));
+diff --git a/src/prototype.js b/src/prototype.js
+index d879ff6..3418cef 100644
+--- a/src/prototype.js
++++ b/src/prototype.js
+@@ -38,4 +38,6 @@ if (Prototype.Browser.MobileSafari)
  
- <%= include 'enumerable.js', 'array.js', 'number.js', 'hash.js', 'range.js' %>
+ <%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
  
--<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js' %>
-+<%= include 'ajax.js', 'dom.js', 'selector.js', 'form.js', 'event.js', 'deprecated.js', 'reiterate.js', 'method_chain.js' %>
- 
++<%= include 'reiterate.js', 'method_chain.js' %>
++
  Element.addMethods();
-Index: src/reiterate.js
-===================================================================
---- src/reiterate.js	(revision 0)
-+++ src/reiterate.js	(revision 0)
+diff --git a/src/reiterate.js b/src/reiterate.js
+new file mode 100644
+index 0000000..60351de
+--- /dev/null
++++ b/src/reiterate.js
 @@ -0,0 +1 @@
-+Function.from=function(a){if(a.toFunction)return a.toFunction();if(typeof a=='function')return a;if(typeof a=='object')return Function.fromObject(a);return function(x){return x}};String.prototype.toFunction=function(){var d=this.split('.');if(!d[0])return function(x){return x};return function(o){var a,b=o,c;for(var i=0,n=d.length;i<n;i++){c=d[i];a=b;b=a[c];if(typeof b=='function')b=b.apply(a)}return b}};Array.prototype.toFunction=function(){var b=this[0],c=this.slice(1),d;if(!b)return function(x){return x};if(d=Function.OPERATORS[b])b=d;return function(o){var a=(typeof b=='function')?b:o[b];return(typeof a=='function')?a.apply(o,c):undefined}};Function.fromObject=function(f){var g=[];for(var h in f){if(f.hasOwnProperty(h))g.push(h)}if(g.length===0)return function(x){return x};return function(o){var a=true,b,c,d,e;for(var i=0,n=g.length;i<n;i++){b=g[i];c=o[b];d=f[b];if(e=Function.OPERATORS[b])c=e;if(typeof c=='function'&&!(d instanceof Array))d=[d];a=a&&((typeof c=='function')?c.apply(o,d):c==d)}return a}};Hash.prototype.toFunction=function(){return Function.fromObject(this._object||this)};Function.OPERATORS={'+':function(x){return this+x},'-':function(x){return this-x},'*':function(x){return this*x},'/':function(x){return this/x},'%':function(x){return this%x},'<':function(x){return this<x},'<=':function(x){return this<=x},'>':function(x){return this>x},'>=':function(x){return this>=x},'==':function(x){return this.valueOf()==x},'!=':function(x){return this.valueOf()!=x},'===':function(x){return this.valueOf()===x},'!==':function(x){return this.valueOf()!==x},'&&':function(x){return this.valueOf()&&x},'&':function(x){return this&x},'||':function(x){return this.valueOf()||x},'|':function(x){return this|x},'typeof':function(x){return typeof this.valueOf()==x},'instanceof':function(x){return this instanceof x}};[Enumerable,Array.prototype,Hash.prototype,ObjectRange.prototype,Ajax.Responders,Element.ClassNames.prototype].each(function(d){$w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(b){if(!d[b]){return}var c=d[b];d[b]=function(){var a=$A(arguments);if(a[0])a[0]=Function.from(a[0]);return c.apply(this,a)}});d.count=function(a,b){return this.findAll(a,b).length}});
++Function.from=function(b){if(b.toFunction)return b.toFunction();if(typeof b=='function')return b;if(typeof b=='object')return Function.fromObject(b);return function(a){return a}};String.prototype.toFunction=function(){var f=this.split('.');if(!f[0])return function(x){return x};return function(a){var b,c=a,d;for(var e=0,g=f.length;e<g;e++){d=f[e];b=c;c=b[d];if(typeof c=='function')c=c.apply(b)}return c}};Array.prototype.toFunction=function(){var c=this[0],d=this.slice(1),e;if(!c)return function(x){return x};if(e=Function.OPERATORS[c])c=e;return function(a){var b=(typeof c=='function')?c:a[c];return(typeof b=='function')?b.apply(a,d):undefined}};Function.fromObject=function(i){var h=[];for(var j in i){if(i.hasOwnProperty(j))h.push(j)}if(h.length===0)return function(x){return x};return function(a){var b=true,c,d,e,g;for(var f=0,k=h.length;f<k;f++){c=h[f];d=a[c];e=i[c];if(g=Function.OPERATORS[c])d=g;if(typeof d=='function'&&!(e instanceof Array))e=[e];b=b&&((typeof d=='function')?d.apply(a,e):d==e)}return b}};Hash.prototype.toFunction=function(){return Function.fromObject(this._object||this)};Function.OPERATORS={'+':function(a){return this+a},'-':function(a){return this-a},'*':function(a){return this*a},'/':function(a){return this/a},'%':function(a){return this%a},'<':function(a){return this<a},'<=':function(a){return this<=a},'>':function(a){return this>a},'>=':function(a){return this>=a},'==':function(a){return this.valueOf()==a},'!=':function(a){return this.valueOf()!=a},'===':function(a){return this.valueOf()===a},'!==':function(a){return this.valueOf()!==a},'&&':function(a){return this.valueOf()&&a},'&':function(a){return this&a},'||':function(a){return this.valueOf()||a},'|':function(a){return this|a},'typeof':function(a){return typeof this.valueOf()==a},'instanceof':function(a){return this instanceof a}};[Enumerable,Array.prototype,Hash.prototype,ObjectRange.prototype,Ajax.Responders,Element.ClassNames.prototype].each(function(d){$w('each all any collect detect findAll max min partition reject sortBy map find select filter every some').each(function(b){if(!d[b])return;var c=d[b];d[b]=function(){var a=$A(arguments);if(a[0])a[0]=Function.from(a[0]);return c.apply(this,a)}});d.count=function(a,b){return this.findAll(a,b).length}});
+diff --git a/test/unit/enumerable_test.js b/test/unit/enumerable_test.js
+index fdc7c01..235f151 100644
+--- a/test/unit/enumerable_test.js
++++ b/test/unit/enumerable_test.js
+@@ -259,5 +259,90 @@ new Test.Unit.Runner({
+     this.assertEqual(4, Fixtures.Nicknames.size());
+     this.assertEqual(26, Fixtures.Primes.size());
+     this.assertEqual(0, [].size());
++  },
++  
++  testReiterate: function() {
++    this.assertEqual('3, 3', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['==', 3]).join(', '));
++    this.assertEqual('9, 7, 8', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['>', 5]).join(', '));
++    this.assertEqual('19, 13, 21, 15, 17', [7, 1, 9, 3, 5].map(['+', 12]).join(', '));
++    this.assertEqual('2, 7, 3, 6', [8, 28, 12, 24].map(['/', 4]).join(', '));
++    
++    this.assertEqual('7, 8, 5', [9, 3, 1, 7, 8, 5, 3, 0].findAll({'>': 3, '<=': 8}).join(', '));
++    this.assertEqual('1, 3, 1, 3, 0, 1, 3, 0', [9, 3, 1, 7, 8, 5, 3, 0].map(['%', 4]).join(', '));
++    
++    this.assertEqual('13, ruby, foo, 77, foo, foo',
++      [13, 'ruby', '', 77, false, 0].map(['||', 'foo']).join(', '));
++    
++    var object = {foo: 'bar'};
++    var stuff = [8,2,'sandwich',4,4.2,object,'4',4,''];
++    
++    this.assertEqual('4, 4', stuff.findAll(['===', 4]).join(', '));
++    this.assertEqual('4, 4, 4', stuff.findAll(['==', 4]).join(', '));
++    
++    this.assertEqual('sandwich, 4, ', stuff.findAll(['instanceof', String]).join(', '));
++    this.assertEqual(1, stuff.findAll(['==', 'sandwich']).length);
++    this.assertEqual(1, stuff.findAll(['===', '4']).length);
++    
++    this.assertEqual('bar', stuff.find(['typeof', 'object']).foo);
++    this.assertEqual('bar', stuff.find(['==', object]).foo);
++    
++    this.assertEqual('8, 2, 4, 4.2, 4', stuff.findAll({'instanceof': Number}).join(', '));
++    this.assertEqual('4, 4', stuff.findAll({'instanceof': Number, '==': 4}).join(', '));
++    this.assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
++    this.assertEqual(7, $R(9,24).count({'>': 12, '<=': 19}));
++    this.prop = "reiterate";
++    var words = $w('could I please just reiterate slowly');
++    this.assertEqual(1, words.count(function(w) { return w == this.prop; }, this));
++
++    this.assert(Fixtures.Radios.any('checked'));
++    this.assert(Fixtures.Records.any('valid'));
++    this.assert([{checked: true}, {checked: 12}, {checked: 'foo'}].all('checked'));
++    this.assert(!Fixtures.Radios.all('checked'));
++    this.assert(!Fixtures.Records.all('valid'));
++    
++    this.assertEqual(Fixtures.Nicknames.join(', '),
++      Fixtures.People.collect('nickname').join(', '));
++    
++    this.assertEqual(Fixtures.Values.pluck('value').join(', '),
++      Fixtures.Nested.collect('value.integer').join(', '));
++    
++    var set = Fixtures.Values.collect(function(v) {
++      return {
++        value: function() { return {quantity: this.k}; },
++        k: v.value
++      };
++    });
++    this.assertEqual(Fixtures.Values.pluck('value').join(', '),
++      set.collect('value.quantity').join(', '));
++    
++    this.assertEqual('plums, apples, oranges',
++      ['apples', 'oranges', 'plums'].sortBy({replace: [/^./, '']}).join(', '));
++    this.assertEqual(true, Fixtures.Radios.detect('checked').checked);
++    this.assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
++    this.assertEqual('Bob', Fixtures.Records.detect('valid').name);
++    this.assertEqual(5, Fixtures.Radios.findAll('checked').length);
++    this.assertEqual(2, $$('div.finder').findAll('visible').length);
++    
++    this.assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
++    this.assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
++    this.assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
++    this.assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
++    this.assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
++    this.assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
++    this.assertEqual(12, Fixtures.Values.max('value'));
++    this.assertEqual(12, Fixtures.Values.max(its().value()));
++    this.assertEqual(-5, Fixtures.Values.min('value'));
++    
++    var result = Fixtures.Radios.partition('checked');
++    this.assertEqual(5, result[0].length);
++    this.assertEqual(3, result[1].length);
++    this.assertEqual(3,
++      Fixtures.Radios.reject('checked').length);
++      
++    this.assertEqual(1,
++      Fixtures.Records.reject('valid').length);
++      
++    this.assertEqual('-5, 6, 9, 12',
++      Fixtures.Values.sortBy(its().value()).map('value').join(', '));
+   }
+-});
 \ No newline at end of file
-Index: test/unit/enumerable.html
-===================================================================
---- test/unit/enumerable.html	(revision 9082)
-+++ test/unit/enumerable.html	(working copy)
-@@ -26,6 +26,10 @@
++});
+diff --git a/test/unit/fixtures/enumerable.html b/test/unit/fixtures/enumerable.html
+index 5e7e8f3..43f3323 100644
+--- a/test/unit/fixtures/enumerable.html
++++ b/test/unit/fixtures/enumerable.html
+@@ -6,3 +6,7 @@
+   </tr>
  </tbody>
  </table>
- 
++
 +<div style="display: block;" class="finder"></div>
 +<div style="display: none;" class="finder"></div>
 +<div style="display: inline;" class="finder"></div>
-+
- <!-- Tests follow -->
- <script type="text/javascript" language="javascript" charset="utf-8">
- // <![CDATA[
-@@ -39,6 +43,20 @@
-     
-     Nicknames: $w('sam- noradio htonl Ulysses'),
-     
-+    Radios: [
-+      {checked: true}, {checked: false}, {checked: 1}, {checked: true},
-+      {checked: ''}, {checked: 17}, {checked: null}, {checked: 'foo'}
-+    ],
-+    
-+    Records: [
-+      {valid: function() { return this.name == 'Bob'; }, name: 'Mike'},
-+      {valid: function() { return this.name == 'Bob'; }, name: 'Bob'}
-+    ],
-+    
-+    Values: [{value: 12}, {value: -5}, {value: 9}, {value: 6}],
-+    
-+    Nested: [{value: {integer: 12}}, {value: {integer: -5}}, {value: {integer: 9}}, {value: {integer: 6}}],
-+    
-     Basic: [1, 2, 3],
-     
-     Primes: [
-@@ -102,6 +120,43 @@
-         return value == this.target_value;
-       }, { target_value: 2 }));
-     },
-+    
-+    testBinaryOperators: function() {
-+      this.assertEqual('3, 3', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['==', 3]).join(', '));
-+      this.assertEqual('9, 7, 8', [9, 3, 1, 7, 8, 5, 3, 0].findAll(['>', 5]).join(', '));
-+      this.assertEqual('19, 13, 21, 15, 17', [7, 1, 9, 3, 5].map(['+', 12]).join(', '));
-+      this.assertEqual('2, 7, 3, 6', [8, 28, 12, 24].map(['/', 4]).join(', '));
-+      
-+      this.assertEqual('7, 8, 5', [9, 3, 1, 7, 8, 5, 3, 0].findAll({'>': 3, '<=': 8}).join(', '));
-+      this.assertEqual('1, 3, 1, 3, 0, 1, 3, 0', [9, 3, 1, 7, 8, 5, 3, 0].map(['%', 4]).join(', '));
-+      
-+      this.assertEqual('13, ruby, foo, 77, foo, foo',
-+        [13, 'ruby', '', 77, false, 0].map(['||', 'foo']).join(', '));
-+      
-+      var object = {foo: 'bar'};
-+      var stuff = [8,2,'sandwich',4,4.2,object,'4',4,''];
-+      
-+      this.assertEqual('4, 4', stuff.findAll(['===', 4]).join(', '));
-+      this.assertEqual('4, 4, 4', stuff.findAll(['==', 4]).join(', '));
-+      
-+      this.assertEqual('sandwich, 4, ', stuff.findAll(['instanceof', String]).join(', '));
-+      this.assertEqual(1, stuff.findAll(['==', 'sandwich']).length);
-+      this.assertEqual(1, stuff.findAll(['===', '4']).length);
-+      
-+      this.assertEqual('bar', stuff.find(['typeof', 'object']).foo);
-+      this.assertEqual('bar', stuff.find(['==', object]).foo);
-+      
-+      this.assertEqual('8, 2, 4, 4.2, 4', stuff.findAll({'instanceof': Number}).join(', '));
-+      this.assertEqual('4, 4', stuff.findAll({'instanceof': Number, '==': 4}).join(', '));
-+      this.assertEqual('2', stuff.findAll({'instanceof': Number, '<=': 3}).join(', '));
-+    },
-+    
-+    testCount: function() {
-+      this.assertEqual(7, $R(9,24).count({'>': 12, '<=': 19}));
-+      this.prop = "reiterate";
-+      var words = $w('could I please just reiterate slowly');
-+      this.assertEqual(1, words.count(function(w) { return w == this.prop; }, this));
-+    },
+diff --git a/test/unit/fixtures/enumerable.js b/test/unit/fixtures/enumerable.js
+index 5fae766..071bf8d 100644
+--- a/test/unit/fixtures/enumerable.js
++++ b/test/unit/fixtures/enumerable.js
+@@ -16,7 +16,26 @@ var Fixtures = {
+     71, 73, 79, 83, 89,  97
+   ],
+   
+-  Z: []
++  Z: [],
++  
++  Radios: [
++    {checked: true}, {checked: false}, {checked: 1}, {checked: true},
++    {checked: ''}, {checked: 17}, {checked: null}, {checked: 'foo'}
++  ],
++  
++  Records: [
++    {valid: function() { return this.name == 'Bob'; }, name: 'Mike'},
++    {valid: function() { return this.name == 'Bob'; }, name: 'Bob'}
++  ],
++  
++  Values: [{value: 12}, {value: -5}, {value: 9}, {value: 6}],
++  
++  Nested: [
++    {value: {integer: 12}},
++    {value: {integer: -5}},
++    {value: {integer: 9}},
++    {value: {integer: 6}}
++  ]
+ };
  
-     testAny: function() {
-       this.assert(!([].any()));
-@@ -116,6 +171,8 @@
-       this.assert(!Fixtures.Basic.any(function(value) {
-         return value > 5;
-       }));
-+      this.assert(Fixtures.Radios.any('checked'));
-+      this.assert(Fixtures.Records.any('valid'));
-     },
-     
-     testAll: function() {
-@@ -131,6 +188,9 @@
-       this.assert(!Fixtures.Basic.all(function(value) {
-         return value > 1;
-       }));
-+      this.assert([{checked: true}, {checked: 12}, {checked: 'foo'}].all('checked'));
-+      this.assert(!Fixtures.Radios.all('checked'));
-+      this.assert(!Fixtures.Records.all('valid'));
-     },
-     
-     testCollect: function() {
-@@ -140,6 +200,24 @@
-         }).join(", "));
-       
-       this.assertEqual(26,  Fixtures.Primes.map().length);
-+      
-+      this.assertEqual(Fixtures.Nicknames.join(', '),
-+        Fixtures.People.collect('nickname').join(', '));
-+      
-+      this.assertEqual(Fixtures.Values.pluck('value').join(', '),
-+        Fixtures.Nested.collect('value.integer').join(', '));
-+      
-+      var set = Fixtures.Values.collect(function(v) {
-+        return {
-+          value: function() { return {quantity: this.k}; },
-+          k: v.value
-+        };
-+      });
-+      this.assertEqual(Fixtures.Values.pluck('value').join(', '),
-+        set.collect('value.quantity').join(', '));
-+      
-+      this.assertEqual('plums, apples, oranges',
-+        ['apples', 'oranges', 'plums'].sortBy({replace: [/^./, '']}).join(', '));
-     },
-     
-     testDetect: function() {
-@@ -147,6 +225,9 @@
-         Fixtures.People.detect(function(person) {
-           return person.nickname.match(/no/);
-         }).name);
-+      this.assertEqual(true, Fixtures.Radios.detect('checked').checked);
-+      this.assertEqual(true, Fixtures.Radios.detect(it().checked()).checked);
-+      this.assertEqual('Bob', Fixtures.Records.detect('valid').name);
-     },
-     
-     testEachSlice: function() {
-@@ -178,6 +259,15 @@
-     testFindAll: function() {
-       this.assertEqual(Fixtures.Primes.join(', '),
-         Fixtures.Z.findAll(prime).join(', '));
-+      this.assertEqual(5, Fixtures.Radios.findAll('checked').length);
-+      this.assertEqual(2, $$('div.finder').findAll('visible').length);
-+      
-+      this.assertEqual(3, $$('div').findAll(['hasClassName', 'finder']).length);
-+      this.assertEqual(3, $$('div').findAll({hasClassName: ['finder']}).length);
-+      this.assertEqual(3, $$('div').findAll(it().hasClassName('finder')).length);
-+      this.assertEqual(2, $$('div').findAll({hasClassName: 'finder', visible: true}).length);
-+      this.assertEqual(3, $$('div').findAll({hasClassName: ['finder'], tagName: 'DIV'}).length);
-+      this.assertEqual(0, $$('div').findAll({hasClassName: ['finder'], tagName: 'SPAN'}).length);
-     },
-     
-     testGrep: function() {
-@@ -254,12 +344,15 @@
-       this.assertEqual(97, Fixtures.Primes.max());
-       this.assertEqual(2, [ -9, -8, -7, -6, -4, -3, -2,  0, -1,  2 ].max());
-       this.assertEqual('sam-', Fixtures.Nicknames.max()); // ?s > ?U
-+      this.assertEqual(12, Fixtures.Values.max('value'));
-+      this.assertEqual(12, Fixtures.Values.max(its().value()));
-     },
-     
-     testMin: function() {
-       this.assertEqual(1, Fixtures.Z.min());
-       this.assertEqual(0, [  1, 2, 3, 4, 5, 6, 7, 8, 0, 9 ].min());
-       this.assertEqual('Ulysses', Fixtures.Nicknames.min()); // ?U < ?h
-+      this.assertEqual(-5, Fixtures.Values.min('value'));
-     },
-     
-     testPartition: function() {
-@@ -270,6 +363,10 @@
-       this.assertEqual(2, result.length);
-       this.assertEqual('sam-, htonl', result[0].join(', '));
-       this.assertEqual('noradio, Ulysses', result[1].join(', '));
-+      
-+      result = Fixtures.Radios.partition('checked');
-+      this.assertEqual(5, result[0].length);
-+      this.assertEqual(3, result[1].length);
-     },
-     
-     testPluck: function() {
-@@ -281,6 +378,12 @@
-       this.assertEqual(0, 
-         Fixtures.Nicknames.reject(Prototype.K).length);
-         
-+      this.assertEqual(3,
-+        Fixtures.Radios.reject('checked').length);
-+        
-+      this.assertEqual(1,
-+        Fixtures.Records.reject('valid').length);
-+        
-       this.assertEqual('sam-, noradio, htonl',
-         Fixtures.Nicknames.reject(function(nickname) {
-           return nickname != nickname.toLowerCase();
-@@ -292,6 +395,9 @@
-         Fixtures.People.sortBy(function(value) {
-           return value.nickname.toLowerCase();
-         }).pluck('nickname').join(', '));
-+        
-+      this.assertEqual('-5, 6, 9, 12',
-+        Fixtures.Values.sortBy(its().value()).map('value').join(', '));
-     },
-     
-     testToArray: function() {
+ for (var i = 1; i <= 100; i++)
